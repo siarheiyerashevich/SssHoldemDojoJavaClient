@@ -40,7 +40,7 @@ public class Client {
 
             WebSocketClient client = factory.newWebSocketClient();
 
-            connection = client.open(new URI(SERVER + "?user=" + USER_NAME + "&PASSWORD=" + PASSWORD),
+            connection = client.open(new URI(SERVER + "?user=" + USER_NAME + "&password=" + PASSWORD),
                                      new WebSocket.OnTextMessage() {
                                          public void onOpen(Connection connection) {
                                              System.out.println("Opened");
@@ -58,11 +58,12 @@ public class Client {
                                                  System.out.println("{\"handledData\": " + data + "}");
                                                  MoveResponse moveResponse = strategy.evaluateResponse(moveData);
                                                  try {
-                                                     connection.sendMessage(moveResponse.getCommand().toString() +
-                                                                            Optional.ofNullable(
-                                                                                    moveResponse.getRaiseAmount())
-                                                                                    .map(amount -> "," + amount)
-                                                                                    .orElse(""));
+                                                     String response = moveResponse.getCommand().toString() +
+                                                                       Optional.ofNullable(
+                                                                               moveResponse.getRaiseAmount())
+                                                                               .map(amount -> "," + amount).orElse("");
+                                                     System.out.println("{\"sendingResponse\": " + response + "}");
+                                                     connection.sendMessage(response);
                                                  } catch (IOException e) {
                                                      e.printStackTrace();
                                                  }
