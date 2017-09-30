@@ -1,10 +1,12 @@
 package com.nedogeek;
 
 
+import com.nedogeek.model.HandData;
 import com.nedogeek.model.MoveData;
 import com.nedogeek.model.MoveResponse;
 import com.nedogeek.strategy.BasicStrategy;
 import com.nedogeek.strategy.Strategy;
+import com.nedogeek.util.MoveDataAnalyzer;
 import com.nedogeek.util.ServerDataParser;
 
 import org.eclipse.jetty.websocket.WebSocket;
@@ -19,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 public class Client {
 
-    private static final String USER_NAME = "someUser";
+    public static final String USER_NAME = "someUser";
     private static final String PASSWORD = "somePassword";
 
     private static final String SERVER = "ws://localhost:8080/ws";
@@ -27,6 +29,9 @@ public class Client {
     private WebSocket.Connection connection;
     private ServerDataParser serverDataParser = new ServerDataParser();
     private Strategy strategy = new BasicStrategy();
+    private MoveDataAnalyzer dataAnalyzer = new MoveDataAnalyzer();
+
+    private HandData handData = new HandData();
 
     public static void main(String[] args) {
         Client client = new Client();
@@ -53,10 +58,16 @@ public class Client {
                                          public void onMessage(String data) {
                                              System.out.println(data);
                                              MoveData moveData = serverDataParser.parseMoveData(data);
+
+                                             if (moveData.getEvent().get(0).equalsIgnoreCase("New game started")) {
+                                                 handData.setPosition(dataAnalyzer.calculatePosition(moveData));
+                                             }
+
                                              if (USER_NAME.equalsIgnoreCase(moveData.getMover()) &&
                                                  moveData.getEvent().get(0).startsWith(USER_NAME)) {
                                                  System.out.println("{\"handledData\": " + data + "}");
-                                                 MoveResponse moveResponse = strategy.evaluateResponse(moveData);
+                                                 MoveResponse moveResponse = strategy.evaluateResponse(handData,
+                                                                                                       moveData);
                                                  try {
                                                      String response = moveResponse.getCommand().toString() +
                                                                        Optional.ofNullable(
