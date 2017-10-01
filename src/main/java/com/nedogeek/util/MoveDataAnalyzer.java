@@ -53,8 +53,8 @@ public class MoveDataAnalyzer {
                 .getSuit().equals(secondCard.getSuit()));
     }
 
-    public static double calculateHandWinProbability(MoveData moveData) {
-        return 0;
+    public static double calculateHandWinProbability(int cardsWeight) {
+        return (170d - cardsWeight) / 169d;
     }
 
     private static List<String> sortStartingFromSmallBlind(List<Player> initial, String dealerName) {
