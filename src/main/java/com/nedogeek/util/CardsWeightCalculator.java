@@ -104,7 +104,7 @@ public class CardsWeightCalculator {
                     case "10":
                         return sameSuit ? 16 : 47;
                     case "9":
-                        return sameSuit ? 26 : 50;
+                        return sameSuit ? 26 : 80;
                     case "8":
                         return sameSuit ? 41 : 108;
                     case "7":
@@ -158,7 +158,7 @@ public class CardsWeightCalculator {
                     case "Q":
                         return sameSuit ? 25 : 83;
                     case "J":
-                        return sameSuit ? 26 : 50;
+                        return sameSuit ? 26 : 80;
                     case "10":
                         return sameSuit ? 23 : 73;
                     case "9":
