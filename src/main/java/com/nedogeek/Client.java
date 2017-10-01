@@ -60,6 +60,11 @@ public class Client {
                                                  handData.setPosition(MoveDataAnalyzer.calculatePosition(moveData));
                                                  handData.setInitialCardsWeight(
                                                          MoveDataAnalyzer.calculateInitialCardsWeight(moveData));
+
+                                                 System.out.println("{\"newPosition\": " + handData.getPosition() +
+                                                                    "},");
+                                                 System.out.println("{\"newInitialCardsWeight\": " +
+                                                                    handData.getInitialCardsWeight() + "},");
                                              }
 
                                              if (USER_NAME.equalsIgnoreCase(moveData.getMover()) &&
