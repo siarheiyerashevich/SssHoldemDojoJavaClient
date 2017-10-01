@@ -61,8 +61,8 @@ public class Client {
                                                  handData.setInitialCardsWeight(
                                                          MoveDataAnalyzer.calculateInitialCardsWeight(moveData));
 
-                                                 System.out.println("{\"newPosition\": " + handData.getPosition() +
-                                                                    "},");
+                                                 System.out
+                                                         .println("{\"newPosition\": " + handData.getPosition() + "},");
                                                  System.out.println("{\"newInitialCardsWeight\": " +
                                                                     handData.getInitialCardsWeight() + "},");
                                              }
