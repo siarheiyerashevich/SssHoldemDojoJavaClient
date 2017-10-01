@@ -27,10 +27,7 @@ public class Client {
     private static final String SERVER = "ws://localhost:8080/ws";
 
     private WebSocket.Connection connection;
-    private ServerDataParser serverDataParser = new ServerDataParser();
     private Strategy strategy = new BasicStrategy();
-    private MoveDataAnalyzer dataAnalyzer = new MoveDataAnalyzer();
-
     private HandData handData = new HandData();
 
     public static void main(String[] args) {
@@ -56,24 +53,26 @@ public class Client {
                                          }
 
                                          public void onMessage(String data) {
-                                             System.out.println(data);
-                                             MoveData moveData = serverDataParser.parseMoveData(data);
+                                             System.out.println(data + ",");
+                                             MoveData moveData = ServerDataParser.parseMoveData(data);
 
                                              if (moveData.getEvent().get(0).equalsIgnoreCase("New game started")) {
-                                                 handData.setPosition(dataAnalyzer.calculatePosition(moveData));
+                                                 handData.setPosition(MoveDataAnalyzer.calculatePosition(moveData));
+                                                 handData.setInitialCardsWeight(
+                                                         MoveDataAnalyzer.calculateInitialCardsWeight(moveData));
                                              }
 
                                              if (USER_NAME.equalsIgnoreCase(moveData.getMover()) &&
                                                  moveData.getEvent().get(0).startsWith(USER_NAME)) {
-                                                 System.out.println("{\"handledData\": " + data + "}");
-                                                 MoveResponse moveResponse = strategy.evaluateResponse(handData,
-                                                                                                       moveData);
+                                                 System.out.println("{\"handledData\": " + data + "},");
+                                                 MoveResponse moveResponse =
+                                                         strategy.evaluateResponse(handData, moveData);
                                                  try {
                                                      String response = moveResponse.getCommand().toString() +
                                                                        Optional.ofNullable(
                                                                                moveResponse.getRaiseAmount())
                                                                                .map(amount -> "," + amount).orElse("");
-                                                     System.out.println("{\"sendingResponse\": " + response + "}");
+                                                     System.out.println("{\"sendingResponse\": \"" + response + "\"},");
                                                      connection.sendMessage(response);
                                                  } catch (IOException e) {
                                                      e.printStackTrace();

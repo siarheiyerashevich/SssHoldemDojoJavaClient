@@ -9,12 +9,11 @@ import com.nedogeek.util.MoveDataAnalyzer;
 
 public class BasicStrategy implements Strategy {
 
-    MoveDataAnalyzer dataAnalyzer = new MoveDataAnalyzer();
-
     @Override
     public MoveResponse evaluateResponse(HandData handData, MoveData moveData) {
         Position position = handData.getPosition();
-        double winProbability = dataAnalyzer.calculateHandWinProbability(moveData);
+        int initialCardsWeight = handData.getInitialCardsWeight();
+        double winProbability = MoveDataAnalyzer.calculateHandWinProbability(moveData);
 
         MoveResponse callResponse = new MoveResponse(Commands.Call);
 

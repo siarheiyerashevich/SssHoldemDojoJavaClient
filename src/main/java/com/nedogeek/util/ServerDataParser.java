@@ -12,7 +12,7 @@ import java.util.List;
 
 public class ServerDataParser {
 
-    public MoveData parseMoveData(String incomingJson) {
+    public static MoveData parseMoveData(String incomingJson) {
         MoveData moveData = new MoveData();
 
         JSONObject json = new JSONObject(incomingJson);
@@ -46,7 +46,7 @@ public class ServerDataParser {
         return moveData;
     }
 
-    private List<String> parseEvent(JSONArray eventJSON) {
+    private static List<String> parseEvent(JSONArray eventJSON) {
         List<String> events = new ArrayList<>();
 
         for (int i = 0; i < eventJSON.length(); i++) {
@@ -56,7 +56,7 @@ public class ServerDataParser {
         return events;
     }
 
-    private List<Player> parsePlayers(JSONArray playersJSON) {
+    private static List<Player> parsePlayers(JSONArray playersJSON) {
         List<Player> players = new ArrayList<>();
         for (int i = 0; i < playersJSON.length(); i++) {
             JSONObject playerJSON = (JSONObject) playersJSON.get(i);
@@ -88,7 +88,7 @@ public class ServerDataParser {
         return players;
     }
 
-    private List<Card> parseCards(JSONArray cardsJSON) {
+    private static List<Card> parseCards(JSONArray cardsJSON) {
         List<Card> cards = new ArrayList<>();
 
         for (int i = 0; i < cardsJSON.length(); i++) {

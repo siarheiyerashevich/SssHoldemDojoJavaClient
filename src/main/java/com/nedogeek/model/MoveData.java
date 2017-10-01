@@ -4,14 +4,14 @@ import java.util.List;
 
 public class MoveData {
 
-    List<Card> deskCards;
-    int pot;
-    String gameRound;
-    String dealer;
-    String mover;
-    List<String> event;
-    List<Player> players;
-    String cardCombination;
+    private  List<Card> deskCards;
+    private  int pot;
+    private  String gameRound;
+    private  String dealer;
+    private  String mover;
+    private  List<String> event;
+    private  List<Player> players;
+    private  String cardCombination;
 
     public List<Card> getDeskCards() {
         return deskCards;
