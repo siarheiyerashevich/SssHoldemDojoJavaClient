@@ -2,6 +2,7 @@ package com.nedogeek.util;
 
 import com.nedogeek.Client;
 import com.nedogeek.context.MoveContext;
+import com.nedogeek.model.AggressionData;
 import com.nedogeek.model.Card;
 import com.nedogeek.model.Player;
 import com.nedogeek.model.Position;
@@ -55,8 +56,8 @@ public class MoveDataAnalyzer {
                 .getSuit().equals(secondCard.getSuit()));
     }
 
-    public static double calculateHandWinProbability(int cardsWeight) {
-        return (170d - cardsWeight) / 169d;
+    public static double calculateHandWinProbability() {
+        return (170d - calculateInitialCardsWeight()) / 169d;
     }
 
     private static List<String> sortPlayersStartingFromSmallBlind() {
@@ -105,5 +106,17 @@ public class MoveDataAnalyzer {
         }
 
         throw new IllegalArgumentException("Round not found: " + event);
+    }
+
+    public static AggressionData calculateAggression() {
+        List<Player> players = MoveContext.INSTANCE.getPlayers();
+        long raiseCount = players.stream()
+                .filter(player -> "Rise".equals(player.getStatus()))
+                .count();
+        long callCount = players.stream()
+                .filter(player -> "Call".equals(player.getStatus()))
+                .count();
+
+        return new AggressionData(callCount, raiseCount);
     }
 }
