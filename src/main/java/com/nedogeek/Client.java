@@ -5,8 +5,7 @@ import com.nedogeek.context.HandContext;
 import com.nedogeek.context.MoveContext;
 import com.nedogeek.context.StreetContext;
 import com.nedogeek.model.MoveResponse;
-import com.nedogeek.strategy.BasicStrategy;
-import com.nedogeek.strategy.Strategy;
+import com.nedogeek.strategy.StrategyFactory;
 import com.nedogeek.util.MoveDataAnalyzer;
 import com.nedogeek.util.ServerDataParser;
 
@@ -28,7 +27,7 @@ public class Client {
     private static final String SERVER = "ws://localhost:8080/ws";
 
     private WebSocket.Connection connection;
-    private Strategy strategy = new BasicStrategy();
+    private StrategyFactory strategyFactory = new StrategyFactory();
 
     public static void main(String[] args) {
         Client client = new Client();
@@ -77,7 +76,8 @@ public class Client {
                                              if (USER_NAME.equalsIgnoreCase(MoveContext.INSTANCE.getMover()) &&
                                                  event.startsWith(USER_NAME)) {
                                                  System.out.println("{\"handledData\": " + data + "},");
-                                                 MoveResponse moveResponse = strategy.evaluateResponse();
+                                                 MoveResponse moveResponse = strategyFactory.getRoundStrategy()
+                                                         .evaluateResponse();
                                                  try {
                                                      String response = moveResponse.getCommand().toString() +
                                                                        Optional.ofNullable(

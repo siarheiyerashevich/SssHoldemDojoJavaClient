@@ -6,7 +6,7 @@ import com.nedogeek.model.MoveResponse;
 import com.nedogeek.model.Position;
 import com.nedogeek.util.MoveDataAnalyzer;
 
-public class BasicStrategy implements Strategy {
+public class PreFlopStrategy implements Strategy {
 
     private static final double DEFAULT_WIN_RATE = 0.9;
 
