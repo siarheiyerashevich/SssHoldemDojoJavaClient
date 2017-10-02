@@ -1,8 +1,9 @@
 package com.nedogeek;
 
 
-import com.nedogeek.model.HandData;
-import com.nedogeek.model.MoveData;
+import com.nedogeek.context.HandContext;
+import com.nedogeek.context.MoveContext;
+import com.nedogeek.context.StreetContext;
 import com.nedogeek.model.MoveResponse;
 import com.nedogeek.strategy.BasicStrategy;
 import com.nedogeek.strategy.Strategy;
@@ -28,7 +29,6 @@ public class Client {
 
     private WebSocket.Connection connection;
     private Strategy strategy = new BasicStrategy();
-    private HandData handData = new HandData();
 
     public static void main(String[] args) {
         Client client = new Client();
@@ -54,30 +54,38 @@ public class Client {
 
                                          public void onMessage(String data) {
                                              System.out.println(data + ",");
-                                             MoveData moveData = ServerDataParser.parseMoveData(data);
+                                             ServerDataParser.parseMoveData(data);
 
-                                             if (moveData.getEvent().get(0).equalsIgnoreCase("New game started")) {
-                                                 handData.setPosition(MoveDataAnalyzer.calculatePosition(moveData));
-                                                 handData.setInitialCardsWeight(
-                                                         MoveDataAnalyzer.calculateInitialCardsWeight(moveData));
+                                             String event = MoveContext.INSTANCE.getEvent().get(0);
+                                             if (event.equalsIgnoreCase("New game started")) {
+                                                 HandContext.INSTANCE.resetContext();
+                                                 HandContext.INSTANCE.setPosition(MoveDataAnalyzer.calculatePosition());
+                                                 HandContext.INSTANCE.setInitialCardsWeight(
+                                                         MoveDataAnalyzer.calculateInitialCardsWeight());
 
-                                                 System.out
-                                                         .println("{\"newPosition\": " + handData.getPosition() + "},");
+                                                 System.out.println(
+                                                         "{\"newPosition\": " + HandContext.INSTANCE.getPosition() +
+                                                         "},");
                                                  System.out.println("{\"newInitialCardsWeight\": " +
-                                                                    handData.getInitialCardsWeight() + "},");
+                                                                    HandContext.INSTANCE.getInitialCardsWeight() +
+                                                                    "},");
+                                             } else if (event.endsWith(" game round started.")) {
+                                                 StreetContext.INSTANCE.resetContext();
+                                                 StreetContext.INSTANCE.setRound(MoveDataAnalyzer.calculateRound());
                                              }
 
-                                             if (USER_NAME.equalsIgnoreCase(moveData.getMover()) &&
-                                                 moveData.getEvent().get(0).startsWith(USER_NAME)) {
+                                             if (USER_NAME.equalsIgnoreCase(MoveContext.INSTANCE.getMover()) &&
+                                                 event.startsWith(USER_NAME)) {
                                                  System.out.println("{\"handledData\": " + data + "},");
-                                                 MoveResponse moveResponse =
-                                                         strategy.evaluateResponse(handData, moveData);
+                                                 MoveResponse moveResponse = strategy.evaluateResponse();
                                                  try {
                                                      String response = moveResponse.getCommand().toString() +
                                                                        Optional.ofNullable(
                                                                                moveResponse.getRaiseAmount())
-                                                                               .map(amount -> "," + amount).orElse("");
-                                                     System.out.println("{\"sendingResponse\": \"" + response + "\"},");
+                                                                               .map(amount -> "," + amount)
+                                                                               .orElse("");
+                                                     System.out.println(
+                                                             "{\"sendingResponse\": \"" + response + "\"},");
                                                      connection.sendMessage(response);
                                                  } catch (IOException e) {
                                                      e.printStackTrace();
