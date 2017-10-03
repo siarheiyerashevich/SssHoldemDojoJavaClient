@@ -13,8 +13,7 @@ public class CallPreFlopStrategy implements Strategy {
     public MoveResponse evaluateResponse() {
         double winProbability = MoveDataAnalyzer.calculateHandWinProbability();
         if (winProbability >= raiseProbabilityLimit) {
-            MoveResponse.RAISE_MOVE_RESPONSE.setRaiseAmount(null);
-            return MoveResponse.RAISE_MOVE_RESPONSE;
+            return MoveResponse.RAISE_MOVE_RESPONSE.withAmount(null);
         } else if (winProbability >= callProbabilityLimit) {
             return MoveResponse.CALL_MOVE_RESPONSE;
         } else {

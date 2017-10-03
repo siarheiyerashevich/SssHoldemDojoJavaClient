@@ -29,4 +29,9 @@ public class MoveResponse {
     public void setRaiseAmount(Integer raiseAmount) {
         this.raiseAmount = raiseAmount;
     }
+
+    public MoveResponse withAmount(Integer raiseAmount) {
+        this.raiseAmount = raiseAmount;
+        return this;
+    }
 }
