@@ -49,8 +49,8 @@ public class MoveDataAnalyzer {
         Card firstCard = myCards.get(0);
         Card secondCard = myCards.get(1);
 
-        return CardsWeightCalculator.calculatePairWeight(firstCard.getValue(), secondCard.getValue(), firstCard
-                .getSuit().equals(secondCard.getSuit()));
+        return CardsWeightCalculator.calculatePairWeight(firstCard.getStringValue(), secondCard.getStringValue(), firstCard
+                .getSuit() == secondCard.getSuit());
     }
 
     public static double calculateHandWinProbability(int cardsWeight) {
