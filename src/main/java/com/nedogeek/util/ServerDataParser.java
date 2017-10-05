@@ -2,6 +2,10 @@ package com.nedogeek.util;
 
 import com.nedogeek.context.MoveContext;
 import com.nedogeek.model.Card;
+
+import com.nedogeek.model.CardSuit;
+import com.nedogeek.model.CardValue;
+import com.nedogeek.model.MoveData;
 import com.nedogeek.model.Player;
 
 import org.json.JSONArray;
@@ -91,7 +95,7 @@ public class ServerDataParser {
             String cardSuit = ((JSONObject) cardsJSON.get(i)).getString("cardSuit");
             String cardValue = ((JSONObject) cardsJSON.get(i)).getString("cardValue");
 
-            cards.add(new Card(cardSuit, cardValue));
+            cards.add(new Card(CardSuit.valueOf(cardSuit), CardValue.valueOf(cardValue)));
         }
 
         return cards;
