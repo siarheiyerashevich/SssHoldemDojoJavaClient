@@ -29,6 +29,14 @@ public abstract class PreFlopActionStrategy implements Strategy {
         }
     }
 
+    private double calculateRaiseProbabilityLimit() {
+        return getInitialRaiseProbabilityLimit() - calculatePositionMargin() - calculateTableTypeMargin();
+    }
+
+    private double calculateCallProbabilityLimit() {
+        return getInitialCallProbabilityLimit() - calculatePositionMargin() - calculateTableTypeMargin();
+    }
+
     private double calculatePositionMargin() {
         Position position = HandContext.INSTANCE.getPosition();
         switch (position) {
@@ -45,14 +53,6 @@ public abstract class PreFlopActionStrategy implements Strategy {
             default:
                 return 0;
         }
-    }
-
-    private double calculateRaiseProbabilityLimit() {
-        return getInitialRaiseProbabilityLimit() - calculatePositionMargin() - calculateTableTypeMargin();
-    }
-
-    private double calculateCallProbabilityLimit() {
-        return getInitialCallProbabilityLimit() - calculatePositionMargin() - calculateTableTypeMargin();
     }
 
     private double calculateTableTypeMargin() {
