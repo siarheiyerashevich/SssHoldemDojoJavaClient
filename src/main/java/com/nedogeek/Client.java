@@ -27,7 +27,6 @@ public class Client {
     private static final String SERVER = "ws://localhost:8080/ws";
 
     private WebSocket.Connection connection;
-    private StrategyFactory strategyFactory = new StrategyFactory();
 
     public static void main(String[] args) {
         Client client = new Client();
@@ -76,7 +75,7 @@ public class Client {
                                              if (USER_NAME.equalsIgnoreCase(MoveContext.INSTANCE.getMover()) &&
                                                  event.startsWith(USER_NAME)) {
                                                  System.out.println("{\"handledData\": " + data + "},");
-                                                 MoveResponse moveResponse = strategyFactory.getRoundStrategy()
+                                                 MoveResponse moveResponse = StrategyFactory.INSTANCE.calculateRoundStrategy()
                                                          .evaluateResponse();
                                                  try {
                                                      String response = moveResponse.getCommand().toString() +
