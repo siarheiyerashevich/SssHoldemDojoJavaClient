@@ -93,7 +93,7 @@ public class ServerDataParser {
             String cardSuit = ((JSONObject) cardsJSON.get(i)).getString("cardSuit");
             String cardValue = ((JSONObject) cardsJSON.get(i)).getString("cardValue");
 
-            cards.add(new Card(CardSuit.valueOf(cardSuit), CardValue.valueOf(cardValue)));
+            cards.add(new Card(CardSuit.fromString(cardSuit), CardValue.fromString(cardValue)));
         }
 
         return cards;

@@ -113,7 +113,7 @@ public class MoveDataAnalyzer {
     public static AggressionData calculateAggression() {
         List<Player> players = MoveContext.INSTANCE.getPlayers();
         long raiseCount = players.stream()
-                .filter(player -> "Rise".equals(player.getStatus()))
+                .filter(player -> "Rise".equals(player.getStatus()) || "AllIn".equals(player.getStatus()))
                 .count();
         long callCount = players.stream()
                 .filter(player -> "Call".equals(player.getStatus()))

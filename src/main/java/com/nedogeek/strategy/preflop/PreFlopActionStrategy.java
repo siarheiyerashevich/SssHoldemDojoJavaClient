@@ -15,12 +15,26 @@ public abstract class PreFlopActionStrategy implements Strategy {
         if (winProbability >= calculateRaiseProbabilityLimit()) {
             int raiseAmount = MoveDataAnalyzer.calculateRaiseAmount();
             int ownBalance = MoveDataAnalyzer.calculateOwnBalance();
+
+            System.out.println("{\"raising\": {" +
+                               "\"raiseAmount\":" + raiseAmount + ","
+                               + "\"ownBalance\":" + ownBalance + ","
+                               + "\"winProbability\":" + winProbability + ","
+                               + "}},");
+
             return ownBalance > raiseAmount * 2 ?
                    MoveResponse.RAISE_MOVE_RESPONSE.withAmount(raiseAmount) :
                    MoveResponse.ALL_IN_MOVE_RESPONSE;
         } else if (winProbability >= calculateCallProbabilityLimit()) {
             int callAmount = MoveDataAnalyzer.calculateCallAmount();
             int ownBalance = MoveDataAnalyzer.calculateOwnBalance();
+
+            System.out.println("{\"calling\": {" +
+                               "\"callAmount\":" + callAmount + ","
+                               + "\"ownBalance\":" + ownBalance + ","
+                               + "\"winProbability\":" + winProbability + ","
+                               + "}},");
+
             return ownBalance > callAmount * 2 ?
                    MoveResponse.CALL_MOVE_RESPONSE :
                    MoveResponse.ALL_IN_MOVE_RESPONSE;
@@ -30,11 +44,35 @@ public abstract class PreFlopActionStrategy implements Strategy {
     }
 
     private double calculateRaiseProbabilityLimit() {
-        return getInitialRaiseProbabilityLimit() - calculatePositionMargin() - calculateTableTypeMargin();
+        double initialRaiseProbabilityLimit = getInitialRaiseProbabilityLimit();
+        double positionMargin = calculatePositionMargin();
+        double tableTypeMargin = calculateTableTypeMargin();
+        double result = initialRaiseProbabilityLimit - positionMargin - tableTypeMargin;
+
+        System.out.println("{\"raiseProbabilityLimit\": {" +
+                           "\"initialRaiseProbabilityLimit\":" + initialRaiseProbabilityLimit + ","
+                           + "\"positionMargin\":" + positionMargin + ","
+                           + "\"tableTypeMargin\":" + tableTypeMargin + ","
+                           + "\"result\":" + result + ","
+                           + "}},");
+
+        return result;
     }
 
     private double calculateCallProbabilityLimit() {
-        return getInitialCallProbabilityLimit() - calculatePositionMargin() - calculateTableTypeMargin();
+        double initialCallProbabilityLimit = getInitialCallProbabilityLimit();
+        double positionMargin = calculatePositionMargin();
+        double tableTypeMargin = calculateTableTypeMargin();
+        double result = initialCallProbabilityLimit - positionMargin - tableTypeMargin;
+
+        System.out.println("{\"callProbabilityLimit\": {" +
+                           "\"initialCallProbabilityLimit\":" + initialCallProbabilityLimit + ","
+                           + "\"positionMargin\":" + positionMargin + ","
+                           + "\"tableTypeMargin\":" + tableTypeMargin + ","
+                           + "\"result\":" + result + ","
+                           + "}},");
+
+        return result;
     }
 
     private double calculatePositionMargin() {
