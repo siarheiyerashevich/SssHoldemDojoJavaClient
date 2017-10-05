@@ -2,10 +2,8 @@ package com.nedogeek.util;
 
 import com.nedogeek.context.MoveContext;
 import com.nedogeek.model.Card;
-
 import com.nedogeek.model.CardSuit;
 import com.nedogeek.model.CardValue;
-import com.nedogeek.model.MoveData;
 import com.nedogeek.model.Player;
 
 import org.json.JSONArray;

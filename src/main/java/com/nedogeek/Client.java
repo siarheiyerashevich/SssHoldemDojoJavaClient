@@ -58,8 +58,12 @@ public class Client {
                                              if (event.equalsIgnoreCase("New game started")) {
                                                  HandContext.INSTANCE.resetContext();
                                                  HandContext.INSTANCE.setPosition(MoveDataAnalyzer.calculatePosition());
+                                                 HandContext.INSTANCE
+                                                         .setTableType(MoveDataAnalyzer.calculateTableType());
                                                  HandContext.INSTANCE.setInitialCardsWeight(
                                                          MoveDataAnalyzer.calculateInitialCardsWeight());
+                                                 HandContext.INSTANCE
+                                                         .setBigBlindAmount(MoveDataAnalyzer.calculateBigBlindAmount());
 
                                                  System.out.println(
                                                          "{\"newPosition\": " + HandContext.INSTANCE.getPosition() +
@@ -75,8 +79,9 @@ public class Client {
                                              if (USER_NAME.equalsIgnoreCase(MoveContext.INSTANCE.getMover()) &&
                                                  event.startsWith(USER_NAME)) {
                                                  System.out.println("{\"handledData\": " + data + "},");
-                                                 MoveResponse moveResponse = StrategyFactory.INSTANCE.calculateRoundStrategy()
-                                                         .evaluateResponse();
+                                                 MoveResponse moveResponse =
+                                                         StrategyFactory.INSTANCE.calculateRoundStrategy()
+                                                                 .evaluateResponse();
                                                  try {
                                                      String response = moveResponse.getCommand().toString() +
                                                                        Optional.ofNullable(
