@@ -1,6 +1,8 @@
 package com.nedogeek.util;
 
+import com.nedogeek.context.MoveContext;
 import com.nedogeek.model.Card;
+
 import com.nedogeek.model.CardSuit;
 import com.nedogeek.model.CardValue;
 import com.nedogeek.model.MoveData;
@@ -14,38 +16,34 @@ import java.util.List;
 
 public class ServerDataParser {
 
-    public static MoveData parseMoveData(String incomingJson) {
-        MoveData moveData = new MoveData();
-
+    public static void parseMoveData(String incomingJson) {
         JSONObject json = new JSONObject(incomingJson);
         if (json.has("deskPot")) {
-            moveData.setPot(json.getInt("deskPot"));
+            MoveContext.INSTANCE.setPot(json.getInt("deskPot"));
         }
         if (json.has("mover")) {
-            moveData.setMover(json.getString("mover"));
+            MoveContext.INSTANCE.setMover(json.getString("mover"));
         }
         if (json.has("dealer")) {
-            moveData.setDealer(json.getString("dealer"));
+            MoveContext.INSTANCE.setDealer(json.getString("dealer"));
         }
         if (json.has("gameRound")) {
-            moveData.setGameRound(json.getString("gameRound"));
+            MoveContext.INSTANCE.setGameRound(json.getString("gameRound"));
         }
         if (json.has("event")) {
-            moveData.setEvent(parseEvent(json.getJSONArray("event")));
+            MoveContext.INSTANCE.setEvent(parseEvent(json.getJSONArray("event")));
         }
         if (json.has("players")) {
-            moveData.setPlayers(parsePlayers(json.getJSONArray("players")));
+            MoveContext.INSTANCE.setPlayers(parsePlayers(json.getJSONArray("players")));
         }
 
         if (json.has("deskCards")) {
-            moveData.setDeskCards(parseCards(((JSONArray) json.get("deskCards"))));
+            MoveContext.INSTANCE.setDeskCards(parseCards(((JSONArray) json.get("deskCards"))));
         }
 
         if (json.has("combination")) {
-            moveData.setCardCombination(json.getString("combination"));
+            MoveContext.INSTANCE.setCardCombination(json.getString("combination"));
         }
-
-        return moveData;
     }
 
     private static List<String> parseEvent(JSONArray eventJSON) {
