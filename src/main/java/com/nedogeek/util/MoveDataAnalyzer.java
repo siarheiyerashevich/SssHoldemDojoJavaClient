@@ -1,6 +1,7 @@
 package com.nedogeek.util;
 
 import com.nedogeek.Client;
+import com.nedogeek.context.GameContext;
 import com.nedogeek.context.HandContext;
 import com.nedogeek.context.MoveContext;
 import com.nedogeek.model.AggressionData;
@@ -12,6 +13,7 @@ import com.nedogeek.model.TableType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class MoveDataAnalyzer {
 
@@ -120,6 +122,29 @@ public class MoveDataAnalyzer {
                 .count();
 
         return new AggressionData(callCount, raiseCount);
+    }
+
+    public static void calculatePreFlopAggression() {
+        Map<String, AggressionData> aggressionMap = GameContext.INSTANCE.getAggressionMap();
+
+        for (Player player : MoveContext.INSTANCE.getPlayers()) {
+            String name = player.getName();
+            if (Client.USER_NAME.equalsIgnoreCase(name)) {
+                continue;
+            }
+
+            AggressionData aggressionData = aggressionMap.computeIfAbsent(name, key -> new AggressionData());
+            String status = player.getStatus();
+            switch (status) {
+                case "Rise":
+                case "AllIn":
+                    aggressionData.incrementRaiseCount();
+                    break;
+                case "Call":
+                    aggressionData.incrementCallCount();
+                    break;
+            }
+        }
     }
 
     public static TableType calculateTableType() {

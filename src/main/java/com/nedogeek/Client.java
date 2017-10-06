@@ -1,10 +1,12 @@
 package com.nedogeek;
 
 
+import com.nedogeek.context.GameContext;
 import com.nedogeek.context.HandContext;
 import com.nedogeek.context.MoveContext;
 import com.nedogeek.context.StreetContext;
 import com.nedogeek.model.MoveResponse;
+import com.nedogeek.model.Round;
 import com.nedogeek.strategy.StrategyFactory;
 import com.nedogeek.util.MoveDataAnalyzer;
 import com.nedogeek.util.ServerDataParser;
@@ -56,6 +58,8 @@ public class Client {
 
                                              String event = MoveContext.INSTANCE.getEvent().get(0);
                                              if (event.equalsIgnoreCase("New game started")) {
+                                                 GameContext.INSTANCE.incrementHandsCount();
+
                                                  HandContext.INSTANCE.resetContext();
                                                  HandContext.INSTANCE.setPosition(MoveDataAnalyzer.calculatePosition());
                                                  HandContext.INSTANCE
@@ -74,6 +78,10 @@ public class Client {
                                              } else if (event.endsWith(" game round started.")) {
                                                  StreetContext.INSTANCE.resetContext();
                                                  StreetContext.INSTANCE.setRound(MoveDataAnalyzer.calculateRound());
+
+                                                 if (StreetContext.INSTANCE.getRound() == Round.FLOP) {
+                                                     MoveDataAnalyzer.calculatePreFlopAggression();
+                                                 }
                                              }
 
                                              if (USER_NAME.equalsIgnoreCase(MoveContext.INSTANCE.getMover()) &&

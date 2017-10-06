@@ -1,5 +1,25 @@
 package com.nedogeek.context;
 
+import com.nedogeek.model.AggressionData;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public enum GameContext {
-    INSTANCE
+    INSTANCE;
+
+    private int handsCount;
+    private Map<String, AggressionData> aggressionMap = new HashMap<>();
+
+    public void incrementHandsCount() {
+        handsCount++;
+    }
+
+    public Map<String, AggressionData> getAggressionMap() {
+        return aggressionMap;
+    }
+
+    public void resetContext() {
+        handsCount = 0;
+    }
 }
