@@ -4,6 +4,7 @@ public class AggressionData {
 
     private long callCount;
     private long raiseCount;
+    private long threeBetCount;
 
     public AggressionData() {
     }
@@ -27,5 +28,14 @@ public class AggressionData {
 
     public void incrementRaiseCount() {
         raiseCount++;
+    }
+
+    public long getThreeBetCount() {
+        return threeBetCount;
+    }
+
+
+    public void incrementThreeBetCount() {
+        threeBetCount++;
     }
 }

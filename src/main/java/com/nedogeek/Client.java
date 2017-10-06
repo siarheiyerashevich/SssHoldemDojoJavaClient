@@ -56,6 +56,14 @@ public class Client {
                                              System.out.println(data + ",");
                                              ServerDataParser.parseMoveData(data);
 
+                                             if (StreetContext.INSTANCE.getRound() == Round.PRE_FLOP) {
+                                                 String firstRaiser = StreetContext.INSTANCE.getFirstRaiser();
+                                                 if (firstRaiser == null) {
+                                                     StreetContext.INSTANCE
+                                                             .setFirstRaiser(MoveDataAnalyzer.calculateFirstRaiser());
+                                                 }
+                                             }
+
                                              String event = MoveContext.INSTANCE.getEvent().get(0);
                                              if (event.equalsIgnoreCase("New game started")) {
                                                  GameContext.INSTANCE.incrementHandsCount();
@@ -76,12 +84,12 @@ public class Client {
                                                                     HandContext.INSTANCE.getInitialCardsWeight() +
                                                                     "},");
                                              } else if (event.endsWith(" game round started.")) {
-                                                 StreetContext.INSTANCE.resetContext();
-                                                 StreetContext.INSTANCE.setRound(MoveDataAnalyzer.calculateRound());
-
                                                  if (StreetContext.INSTANCE.getRound() == Round.FLOP) {
                                                      MoveDataAnalyzer.calculatePreFlopAggression();
                                                  }
+
+                                                 StreetContext.INSTANCE.resetContext();
+                                                 StreetContext.INSTANCE.setRound(MoveDataAnalyzer.calculateRound());
                                              }
 
                                              if (USER_NAME.equalsIgnoreCase(MoveContext.INSTANCE.getMover()) &&
