@@ -1,7 +1,5 @@
 package com.nedogeek.montecarlo;
 
-import java.util.Arrays;
-
 import com.nedogeek.model.Card;
 import com.nedogeek.model.CardSuit;
 import com.nedogeek.model.CardValue;
