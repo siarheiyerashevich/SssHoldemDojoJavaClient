@@ -1,7 +1,5 @@
 package com.nedogeek.montecarlo;
 
-import java.util.Arrays;
-
 import com.nedogeek.model.Card;
 import com.nedogeek.model.CardSuit;
 import com.nedogeek.model.CardValue;
@@ -103,13 +101,6 @@ public class FastCombination {
             return 13 + result;
         }
         // FIXME: return weight of whole hand
-        // WHY NPE???
-//        if(sameCards.getNotSameCardValues().length == 0) {
-//            System.out.println("NPE: " + Arrays.toString(cards));
-//        }
-        if(sameCards.getNotSameCardValues()[0] == null) {
-            System.out.println("NPE: " + Arrays.toString(cards));
-        }
         return sameCards.getNotSameCardValues()[0].ordinal();
     }
 
@@ -251,13 +242,13 @@ public class FastCombination {
         private boolean isPair = false;
         private int pairCount = 0;
         private int tripleCount = 0;
-        private SameCard[] sameCards;
+        private SameCard[] sameCardsArr;
         private CardValue[] notSameCardValues;
         private int index = 0;
 
         SameCards() {
 
-            sameCards = new SameCard[3];
+            sameCardsArr = new SameCard[3];
         }
 
         void addNotSameCardValues(CardValue[] notSameCardValues) {
@@ -273,7 +264,7 @@ public class FastCombination {
             if (index >= 3) {
                 return;
             }
-            sameCards[index++] = sameCard;
+            sameCardsArr[index++] = sameCard;
             if (sameCard.sameCardType == SameCardType.PAIR) {
                 if (tripleCount > 0) {
                     isFullHouse = true;
@@ -297,8 +288,8 @@ public class FastCombination {
 
             if (isQuads) {
                 for (int i = 0; i < index; i++) {
-                    if (sameCards[i].sameCardType == SameCardType.QUAD) {
-                        return sameCards[i].cardValue.ordinal();
+                    if (sameCardsArr[i].sameCardType == SameCardType.QUAD) {
+                        return sameCardsArr[i].cardValue.ordinal();
                     }
                 }
             }
@@ -312,17 +303,17 @@ public class FastCombination {
                 int highTriple = -1;
                 int highPair = -1;
                 for (int i = 0; i < index; i++) {
-                    if (sameCards[i].sameCardType == SameCardType.TRIPLE
-                            && sameCards[i].cardValue.ordinal() > highTriple) {
-                        highTriple = sameCards[i].cardValue.ordinal();
+                    if (sameCardsArr[i].sameCardType == SameCardType.TRIPLE
+                            && sameCardsArr[i].cardValue.ordinal() > highTriple) {
+                        highTriple = sameCardsArr[i].cardValue.ordinal();
                     }
                 }
                 for (int i = 0; i < index; i++) {
-                    if ((sameCards[i].sameCardType == SameCardType.TRIPLE
-                            || sameCards[i].sameCardType == SameCardType.PAIR)
-                            && sameCards[i].cardValue.ordinal() != highTriple
-                            && sameCards[i].cardValue.ordinal() > highPair) {
-                        highPair = sameCards[i].cardValue.ordinal();
+                    if ((sameCardsArr[i].sameCardType == SameCardType.TRIPLE
+                            || sameCardsArr[i].sameCardType == SameCardType.PAIR)
+                            && sameCardsArr[i].cardValue.ordinal() != highTriple
+                            && sameCardsArr[i].cardValue.ordinal() > highPair) {
+                        highPair = sameCardsArr[i].cardValue.ordinal();
                     }
                 }
                 // FIXME: calculate pair weight in full house combination
@@ -335,8 +326,8 @@ public class FastCombination {
 
             if(isTriple) {
                 for (int i = 0; i < index; i++) {
-                    if (sameCards[i].sameCardType == SameCardType.TRIPLE) {
-                        return sameCards[i].cardValue.ordinal();
+                    if (sameCardsArr[i].sameCardType == SameCardType.TRIPLE) {
+                        return sameCardsArr[i].cardValue.ordinal();
                     }
                 }
             }
@@ -350,16 +341,16 @@ public class FastCombination {
                 int highPair = -1;
                 int secondPair = -1;
                 for (int i = 0; i < index; i++) {
-                    if (sameCards[i].sameCardType == SameCardType.PAIR
-                            && sameCards[i].cardValue.ordinal() > highPair) {
-                        highPair = sameCards[i].cardValue.ordinal();
+                    if (sameCardsArr[i].sameCardType == SameCardType.PAIR
+                            && sameCardsArr[i].cardValue.ordinal() > highPair) {
+                        highPair = sameCardsArr[i].cardValue.ordinal();
                     }
                 }
                 for (int i = 0; i < index; i++) {
-                    if (sameCards[i].sameCardType == SameCardType.PAIR
-                            && sameCards[i].cardValue.ordinal() != highPair
-                            && sameCards[i].cardValue.ordinal() > secondPair) {
-                        highPair = sameCards[i].cardValue.ordinal();
+                    if (sameCardsArr[i].sameCardType == SameCardType.PAIR
+                            && sameCardsArr[i].cardValue.ordinal() != highPair
+                            && sameCardsArr[i].cardValue.ordinal() > secondPair) {
+                        highPair = sameCardsArr[i].cardValue.ordinal();
                     }
                 }
                 // FIXME: calculate low pair weight in combination
@@ -372,8 +363,8 @@ public class FastCombination {
 
             if(isPair) {
                 for (int i = 0; i < index; i++) {
-                    if (sameCards[i].sameCardType == SameCardType.PAIR) {
-                        return sameCards[i].cardValue.ordinal();
+                    if (sameCardsArr[i].sameCardType == SameCardType.PAIR) {
+                        return sameCardsArr[i].cardValue.ordinal();
                     }
                 }
             }
@@ -386,14 +377,14 @@ public class FastCombination {
         private CardValue cardValue;
         private SameCardType sameCardType;
 
-        public SameCard(CardValue cardValue, SameCardType sameCardType) {
+        SameCard(CardValue cardValue, SameCardType sameCardType) {
 
             this.cardValue = cardValue;
             this.sameCardType = sameCardType;
         }
     }
 
-    private static enum SameCardType {
+    private enum SameCardType {
         QUAD, TRIPLE, PAIR
     }
 }
