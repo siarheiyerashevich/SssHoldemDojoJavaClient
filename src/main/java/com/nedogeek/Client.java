@@ -78,7 +78,6 @@ public class Client {
 
                                              if (USER_NAME.equalsIgnoreCase(MoveContext.INSTANCE.getMover()) &&
                                                  event.startsWith(USER_NAME)) {
-                                                 System.out.println("{\"handledData\": " + data + "},");
                                                  MoveResponse moveResponse =
                                                          StrategyFactory.INSTANCE.calculateRoundStrategy()
                                                                  .evaluateResponse();
