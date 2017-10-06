@@ -1,17 +1,21 @@
-package com.nedogeek.model;
+package com.nedogeek.context;
+
+import com.nedogeek.model.Card;
+import com.nedogeek.model.Player;
 
 import java.util.List;
 
-public class MoveData {
+public enum MoveContext {
+    INSTANCE;
 
-    private  List<Card> deskCards;
-    private  int pot;
-    private  String gameRound;
-    private  String dealer;
-    private  String mover;
-    private  List<String> event;
-    private  List<Player> players;
-    private  String cardCombination;
+    private List<Card> deskCards;
+    private int pot;
+    private String gameRound;
+    private String dealer;
+    private String mover;
+    private List<String> event;
+    private List<Player> players;
+    private String cardCombination;
 
     public List<Card> getDeskCards() {
         return deskCards;
