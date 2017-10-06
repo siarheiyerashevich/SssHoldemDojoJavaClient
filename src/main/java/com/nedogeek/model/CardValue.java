@@ -22,10 +22,42 @@ public enum CardValue {
         this.stringValue = stringValue;
     }
 
+    public static CardValue fromString(String s) {
+        switch (s) {
+            case "2":
+                return TWO;
+            case "3":
+                return THREE;
+            case "4":
+                return FOUR;
+            case "5":
+                return FIVE;
+            case "6":
+                return SIX;
+            case "7":
+                return SEVEN;
+            case "8":
+                return EIGHT;
+            case "9":
+                return NINE;
+            case "10":
+                return TEN;
+            case "J":
+                return JACK;
+            case "Q":
+                return QUEEN;
+            case "K":
+                return KING;
+            case "A":
+                return ACE;
+        }
+
+        throw new IllegalArgumentException("Value not found: " + s);
+    }
+
     @Override
     public String toString() {
 
         return stringValue;
     }
-
 }

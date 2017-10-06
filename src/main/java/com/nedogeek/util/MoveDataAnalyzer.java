@@ -1,6 +1,7 @@
 package com.nedogeek.util;
 
 import com.nedogeek.Client;
+import com.nedogeek.context.HandContext;
 import com.nedogeek.context.MoveContext;
 import com.nedogeek.model.AggressionData;
 import com.nedogeek.model.Card;
@@ -23,17 +24,15 @@ public class MoveDataAnalyzer {
                 sortPlayersStartingFromSmallBlind();
         if (Client.USER_NAME.equalsIgnoreCase(sortedPlayers.get(0))) {
             return Position.SMALL_BLIND;
-        }
-        if (Client.USER_NAME.equalsIgnoreCase(sortedPlayers.get(1))) {
+        } else if (Client.USER_NAME.equalsIgnoreCase(sortedPlayers.get(1))) {
             return Position.BIG_BLIND;
+        } else if (Client.USER_NAME.equalsIgnoreCase(sortedPlayers.get(2))) {
+            return Position.UNDER_THE_GUN;
         }
 
         int playersCount = sortedPlayers.size();
         if (Client.USER_NAME.equalsIgnoreCase(sortedPlayers.get(playersCount - 2))) {
             return Position.CUT_OFF;
-        }
-        if (Client.USER_NAME.equalsIgnoreCase(sortedPlayers.get(2))) {
-            return Position.UNDER_THE_GUN;
         }
 
         // TODO:
@@ -53,8 +52,10 @@ public class MoveDataAnalyzer {
         Card firstCard = myCards.get(0);
         Card secondCard = myCards.get(1);
 
-        return CardsWeightCalculator.calculatePairWeight(firstCard.getStringValue(), secondCard.getStringValue(), firstCard
-                .getSuit() == secondCard.getSuit());
+        return CardsWeightCalculator
+                .calculatePairWeight(firstCard.getStringValue(), secondCard.getStringValue(), firstCard
+                                                                                                      .getSuit() ==
+                                                                                              secondCard.getSuit());
     }
 
     public static double calculateHandWinProbability() {
@@ -112,7 +113,7 @@ public class MoveDataAnalyzer {
     public static AggressionData calculateAggression() {
         List<Player> players = MoveContext.INSTANCE.getPlayers();
         long raiseCount = players.stream()
-                .filter(player -> "Rise".equals(player.getStatus()))
+                .filter(player -> "Rise".equals(player.getStatus()) || "AllIn".equals(player.getStatus()))
                 .count();
         long callCount = players.stream()
                 .filter(player -> "Call".equals(player.getStatus()))
@@ -136,5 +137,45 @@ public class MoveDataAnalyzer {
             default:
                 return TableType.LONG;
         }
+    }
+
+    public static int calculateBigBlindAmount() {
+        return MoveContext.INSTANCE.getPot() * 2 / 3;
+    }
+
+    public static int calculateCallAmount() {
+        int maxBet = 0;
+        int ownBet = 0;
+
+        List<Player> players = MoveContext.INSTANCE.getPlayers();
+        for (Player player : players) {
+            if (Client.USER_NAME.equals(player.getName())) {
+                ownBet = player.getBet();
+            } else if (player.getBet() > maxBet) {
+                maxBet = player.getBet();
+            }
+        }
+
+        return maxBet - ownBet;
+    }
+
+    public static int calculateRaiseAmount() {
+        int blindAmount = HandContext.INSTANCE.getBigBlindAmount();
+        Position position = HandContext.INSTANCE.getPosition();
+
+        switch (position) {
+            case UNDER_THE_GUN:
+                return 4 * blindAmount;
+            default:
+                return 3 * blindAmount;
+        }
+    }
+
+    public static int calculateOwnBalance() {
+        return MoveContext.INSTANCE.getPlayers().stream()
+                .filter(player -> Client.USER_NAME.equalsIgnoreCase(player.getName()))
+                .findFirst()
+                .map(Player::getBalance)
+                .orElse(0);
     }
 }
