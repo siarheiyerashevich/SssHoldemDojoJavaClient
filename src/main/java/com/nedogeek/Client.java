@@ -1,10 +1,12 @@
 package com.nedogeek;
 
 
+import com.nedogeek.context.GameContext;
 import com.nedogeek.context.HandContext;
 import com.nedogeek.context.MoveContext;
 import com.nedogeek.context.StreetContext;
 import com.nedogeek.model.MoveResponse;
+import com.nedogeek.model.Round;
 import com.nedogeek.strategy.StrategyFactory;
 import com.nedogeek.util.MoveDataAnalyzer;
 import com.nedogeek.util.ServerDataParser;
@@ -54,8 +56,18 @@ public class Client {
                                              System.out.println(data + ",");
                                              ServerDataParser.parseMoveData(data);
 
+                                             if (StreetContext.INSTANCE.getRound() == Round.PRE_FLOP) {
+                                                 String firstRaiser = StreetContext.INSTANCE.getFirstRaiser();
+                                                 if (firstRaiser == null) {
+                                                     StreetContext.INSTANCE
+                                                             .setFirstRaiser(MoveDataAnalyzer.calculateFirstRaiser());
+                                                 }
+                                             }
+
                                              String event = MoveContext.INSTANCE.getEvent().get(0);
                                              if (event.equalsIgnoreCase("New game started")) {
+                                                 GameContext.INSTANCE.incrementHandsCount();
+
                                                  HandContext.INSTANCE.resetContext();
                                                  HandContext.INSTANCE.setPosition(MoveDataAnalyzer.calculatePosition());
                                                  HandContext.INSTANCE
@@ -72,13 +84,16 @@ public class Client {
                                                                     HandContext.INSTANCE.getInitialCardsWeight() +
                                                                     "},");
                                              } else if (event.endsWith(" game round started.")) {
+                                                 if (StreetContext.INSTANCE.getRound() == Round.FLOP) {
+                                                     MoveDataAnalyzer.calculatePreFlopAggression();
+                                                 }
+
                                                  StreetContext.INSTANCE.resetContext();
                                                  StreetContext.INSTANCE.setRound(MoveDataAnalyzer.calculateRound());
                                              }
 
                                              if (USER_NAME.equalsIgnoreCase(MoveContext.INSTANCE.getMover()) &&
                                                  event.startsWith(USER_NAME)) {
-                                                 System.out.println("{\"handledData\": " + data + "},");
                                                  MoveResponse moveResponse =
                                                          StrategyFactory.INSTANCE.calculateRoundStrategy()
                                                                  .evaluateResponse();

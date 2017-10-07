@@ -1,12 +1,16 @@
 package com.nedogeek.strategy.preflop;
 
+import static com.nedogeek.strategy.preflop.PreFlopActionCoefficients.THREE_BET_CALL_COEFFICIENT;
+import static com.nedogeek.strategy.preflop.PreFlopActionCoefficients.THREE_BET_RAISE_COEFFICIENT;
+
 public class ThreeBetPreFlopStrategy extends PreFlopActionStrategy {
 
-    @Override public double getInitialRaiseProbabilityLimit() {
-        return 0.95;
+
+    public double getInitialRaiseProbabilityLimit() {
+        return THREE_BET_RAISE_COEFFICIENT;
     }
 
-    @Override public double getInitialCallProbabilityLimit() {
-        return 0.9;
+    public double getInitialCallProbabilityLimit() {
+        return THREE_BET_CALL_COEFFICIENT;
     }
 }

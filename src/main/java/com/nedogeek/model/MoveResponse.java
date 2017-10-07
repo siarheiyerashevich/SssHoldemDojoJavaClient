@@ -2,7 +2,7 @@ package com.nedogeek.model;
 
 public class MoveResponse {
 
-    public static final MoveResponse CHECK_MOVE_RESPONSE = new MoveResponse(Commands.Call);
+    public static final MoveResponse CHECK_MOVE_RESPONSE = new MoveResponse(Commands.Check);
     public static final MoveResponse CALL_MOVE_RESPONSE = new MoveResponse(Commands.Call);
     public static final MoveResponse RAISE_MOVE_RESPONSE = new MoveResponse(Commands.Rise);
     public static final MoveResponse ALL_IN_MOVE_RESPONSE = new MoveResponse(Commands.AllIn);
