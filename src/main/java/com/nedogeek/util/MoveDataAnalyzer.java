@@ -6,6 +6,7 @@ import com.nedogeek.context.HandContext;
 import com.nedogeek.context.MoveContext;
 import com.nedogeek.context.StreetContext;
 import com.nedogeek.model.AggressionData;
+import com.nedogeek.model.AggressorData;
 import com.nedogeek.model.Card;
 import com.nedogeek.model.Player;
 import com.nedogeek.model.Position;
@@ -147,10 +148,17 @@ public class MoveDataAnalyzer {
             switch (status) {
                 case "Rise":
                 case "AllIn":
-                    if (name.equalsIgnoreCase(StreetContext.INSTANCE.getFirstRaiser())) {
-                        aggressionData.incrementRaiseCount();
-                    } else {
+                    if (!name.equalsIgnoreCase(StreetContext.INSTANCE.getFirstRaiser())) {
                         aggressionData.incrementThreeBetCount();
+                    } else {
+                        int callAmount = calculateCallAmount();
+                        int bigBlindAmount = HandContext.INSTANCE.getBigBlindAmount();
+
+                        if (callAmount / bigBlindAmount > 3) {
+                            aggressionData.incrementThreeBetCount();
+                        } else {
+                            aggressionData.incrementRaiseCount();
+                        }
                     }
                     break;
                 case "Call":
@@ -158,6 +166,41 @@ public class MoveDataAnalyzer {
                     break;
             }
         }
+    }
+
+    public static AggressorData calculateAggressors() {
+        AggressorData aggressorData = new AggressorData();
+
+        for (Player player : MoveContext.INSTANCE.getPlayers()) {
+            String name = player.getName();
+            if (Client.USER_NAME.equalsIgnoreCase(name)) {
+                continue;
+            }
+
+            String status = player.getStatus();
+            switch (status) {
+                case "Rise":
+                case "AllIn":
+                    if (!name.equalsIgnoreCase(StreetContext.INSTANCE.getFirstRaiser())) {
+                        aggressorData.addThreeBetters(name);
+                    } else {
+                        int callAmount = calculateCallAmount();
+                        int bigBlindAmount = HandContext.INSTANCE.getBigBlindAmount();
+
+                        if (callAmount / bigBlindAmount > 3) {
+                            aggressorData.addThreeBetters(name);
+                        } else {
+                            aggressorData.addRaisers(name);
+                        }
+                    }
+                    break;
+                case "Call":
+                    aggressorData.addCallers(name);
+                    break;
+            }
+        }
+
+        return aggressorData;
     }
 
     public static TableType calculateTableType() {

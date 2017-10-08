@@ -12,4 +12,12 @@ public class NoActionsPreFlopStrategy extends PreFlopActionStrategy {
     public double getInitialCallProbabilityLimit() {
         return NO_ACTIONS_CALL_COEFFICIENT;
     }
+
+    public double calculateStatsBasedRaiseProbabilityLimit() {
+        return calculateCardBasedRaiseProbabilityLimit();
+    }
+
+    public double calculateStatsBasedCallProbabilityLimit() {
+        return calculateCardBasedCallProbabilityLimit();
+    }
 }

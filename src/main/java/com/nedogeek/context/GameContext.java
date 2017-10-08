@@ -8,6 +8,8 @@ import java.util.Map;
 public enum GameContext {
     INSTANCE;
 
+    public static int MINIMAL_VALID_STATS_HAND_COUNT = 50;
+
     private int handsCount;
     private Map<String, AggressionData> aggressionMap = new HashMap<>();
 
@@ -25,5 +27,6 @@ public enum GameContext {
 
     public void resetContext() {
         handsCount = 0;
+        aggressionMap = new HashMap<>();
     }
 }
