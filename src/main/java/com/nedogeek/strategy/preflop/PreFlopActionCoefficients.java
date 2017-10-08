@@ -13,4 +13,7 @@ public class PreFlopActionCoefficients {
 
     public static final double THREE_BET_RAISE_COEFFICIENT = 0.95;
     public static final double THREE_BET_CALL_COEFFICIENT = 0.9;
+
+    public static final double FOUR_BET_PLUS_RAISE_COEFFICIENT = 0.97;
+    public static final double FOUR_BET_PLUS_CALL_COEFFICIENT = 0.94;
 }

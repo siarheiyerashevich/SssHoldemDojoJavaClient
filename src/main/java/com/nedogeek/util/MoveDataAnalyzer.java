@@ -116,14 +116,21 @@ public class MoveDataAnalyzer {
 
     public static AggressionData calculateAggression() {
         List<Player> players = MoveContext.INSTANCE.getPlayers();
+        int bigBlindAmount = HandContext.INSTANCE.getBigBlindAmount();
+
+        long fourBetPlusCount = players.stream()
+                .filter(player -> ("Rise".equals(player.getStatus()) || "AllIn".equals(player.getStatus())) &&
+                                  (player.getBet() / bigBlindAmount > 10))
+                .count();
         long raiseCount = players.stream()
-                .filter(player -> "Rise".equals(player.getStatus()) || "AllIn".equals(player.getStatus()))
+                .filter(player -> ("Rise".equals(player.getStatus()) || "AllIn".equals(player.getStatus())) &&
+                                  (player.getBet() / bigBlindAmount <= 10))
                 .count();
         long callCount = players.stream()
                 .filter(player -> "Call".equals(player.getStatus()))
                 .count();
 
-        return new AggressionData(callCount, raiseCount);
+        return new AggressionData(callCount, raiseCount, fourBetPlusCount);
     }
 
     public static String calculateFirstRaiser() {
@@ -187,7 +194,9 @@ public class MoveDataAnalyzer {
                         int callAmount = calculateCallAmount();
                         int bigBlindAmount = HandContext.INSTANCE.getBigBlindAmount();
 
-                        if (callAmount / bigBlindAmount > 3) {
+                        if (callAmount / bigBlindAmount > 10) {
+                            aggressorData.addFourBetPlusBetters(name);
+                        } else if (callAmount / bigBlindAmount > 3) {
                             aggressorData.addThreeBetters(name);
                         } else {
                             aggressorData.addRaisers(name);

@@ -5,13 +5,15 @@ public class AggressionData {
     private long callCount;
     private long raiseCount;
     private long threeBetCount;
+    private long fourBetPlusCount;
 
     public AggressionData() {
     }
 
-    public AggressionData(long callCount, long raiseCount) {
+    public AggressionData(long callCount, long raiseCount, long fourBetPlusCount) {
         this.callCount = callCount;
         this.raiseCount = raiseCount;
+        this.fourBetPlusCount = fourBetPlusCount;
     }
 
     public long getCallCount() {
@@ -37,5 +39,14 @@ public class AggressionData {
 
     public void incrementThreeBetCount() {
         threeBetCount++;
+    }
+
+    public long getFourBetPlusCount() {
+        return fourBetPlusCount;
+    }
+
+
+    public void incrementFourBetPlusCount() {
+        fourBetPlusCount++;
     }
 }

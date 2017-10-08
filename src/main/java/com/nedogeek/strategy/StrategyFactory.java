@@ -4,6 +4,7 @@ import com.nedogeek.context.StreetContext;
 import com.nedogeek.model.AggressionData;
 import com.nedogeek.model.Round;
 import com.nedogeek.strategy.preflop.CallPreFlopStrategy;
+import com.nedogeek.strategy.preflop.FourBetPlusPreFlopStrategy;
 import com.nedogeek.strategy.preflop.NoActionsPreFlopStrategy;
 import com.nedogeek.strategy.preflop.PreFlopStrategy;
 import com.nedogeek.strategy.preflop.RaisePreFlopStrategy;
@@ -21,6 +22,7 @@ public enum StrategyFactory {
     private final Strategy callPreFlopStrategy = new CallPreFlopStrategy();
     private final Strategy raisePreFlopStrategy = new RaisePreFlopStrategy();
     private final Strategy threeBetPreFlopStrategy = new ThreeBetPreFlopStrategy();
+    private final Strategy fourBetPlusPreFlopStrategy = new FourBetPlusPreFlopStrategy();
 
     public Strategy calculateRoundStrategy() {
         Round round = StreetContext.INSTANCE.getRound();
@@ -43,6 +45,7 @@ public enum StrategyFactory {
 
         long callCount = aggressionData.getCallCount();
         long raiseCount = aggressionData.getRaiseCount();
+        long fourBetPlusCount = aggressionData.getFourBetPlusCount();
 
         if (raiseCount == 0) {
             if (callCount == 0) {
@@ -52,6 +55,8 @@ public enum StrategyFactory {
             }
         } else if (raiseCount == 1) {
             return raisePreFlopStrategy;
+        } else if (fourBetPlusCount > 0) {
+            return fourBetPlusPreFlopStrategy;
         } else {
             return threeBetPreFlopStrategy;
         }

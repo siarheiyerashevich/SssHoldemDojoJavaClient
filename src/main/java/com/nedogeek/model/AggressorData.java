@@ -9,6 +9,7 @@ public class AggressorData {
     private Set<String> callers = new HashSet<>();
     private Set<String> raisers = new HashSet<>();
     private Set<String> threeBetters = new HashSet<>();
+    private Set<String> fourBetPlusBetters = new HashSet<>();
 
     public Set<String> getCallers() {
         return callers;
@@ -32,5 +33,13 @@ public class AggressorData {
 
     public void addThreeBetters(String... threeBetters) {
         this.threeBetters.addAll(Arrays.asList(threeBetters));
+    }
+
+    public Set<String> getFourBetPlusBetters() {
+        return fourBetPlusBetters;
+    }
+
+    public void addFourBetPlusBetters(String... fourBetPlusBetters) {
+        this.fourBetPlusBetters.addAll(Arrays.asList(fourBetPlusBetters));
     }
 }

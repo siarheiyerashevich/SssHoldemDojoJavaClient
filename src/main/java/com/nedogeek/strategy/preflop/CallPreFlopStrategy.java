@@ -40,7 +40,8 @@ public class CallPreFlopStrategy extends PreFlopActionStrategy {
         for (String caller : callers) {
             AggressionData aggressionData = aggressionMap.get(caller);
             double callCount =
-                    aggressionData.getCallCount() + aggressionData.getRaiseCount() + aggressionData.getThreeBetCount();
+                    aggressionData.getCallCount() + aggressionData.getRaiseCount() + aggressionData.getThreeBetCount() +
+                    aggressionData.getFourBetPlusCount();
             double callProbability = callCount / GameContext.INSTANCE.getHandsCount();
             if (minimalEntryProbability < callProbability) {
                 minimalEntryProbability = callProbability;
