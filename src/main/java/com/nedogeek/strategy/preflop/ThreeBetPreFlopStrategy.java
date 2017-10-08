@@ -39,7 +39,7 @@ public class ThreeBetPreFlopStrategy extends PreFlopActionStrategy {
         double minimalEntryProbability = 1;
 
         for (String threeBetter : threeBetters) {
-            double threeBetCount = aggressionMap.get(threeBetter).getCallCount();
+            double threeBetCount = aggressionMap.get(threeBetter).getThreeBetCount();
             double threeBetProbability = threeBetCount / GameContext.INSTANCE.getHandsCount();
             if (minimalEntryProbability < threeBetProbability) {
                 minimalEntryProbability = threeBetProbability;

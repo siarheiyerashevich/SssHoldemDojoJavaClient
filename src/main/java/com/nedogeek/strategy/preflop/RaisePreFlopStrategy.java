@@ -38,7 +38,8 @@ public class RaisePreFlopStrategy extends PreFlopActionStrategy {
         double minimalEntryProbability = 1;
 
         for (String raiser : raisers) {
-            double raiseCount = aggressionMap.get(raiser).getCallCount();
+            AggressionData aggressionData = aggressionMap.get(raiser);
+            double raiseCount = aggressionData.getRaiseCount() + aggressionData.getThreeBetCount();
             double raiseProbability = raiseCount / GameContext.INSTANCE.getHandsCount();
             if (minimalEntryProbability < raiseProbability) {
                 minimalEntryProbability = raiseProbability;
