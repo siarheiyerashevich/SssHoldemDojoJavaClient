@@ -49,6 +49,7 @@ public class Client {
                                          }
 
                                          public void onClose(int closeCode, String message) {
+                                             System.out.println(GameContext.INSTANCE.getHandsCount() + " hands played");
                                              System.out.println("Closed");
                                          }
 

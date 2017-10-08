@@ -11,6 +11,10 @@ public enum GameContext {
     private int handsCount;
     private Map<String, AggressionData> aggressionMap = new HashMap<>();
 
+    public int getHandsCount() {
+        return handsCount;
+    }
+
     public void incrementHandsCount() {
         handsCount++;
     }
