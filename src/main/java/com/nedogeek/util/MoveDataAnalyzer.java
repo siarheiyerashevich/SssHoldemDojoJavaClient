@@ -141,7 +141,7 @@ public class MoveDataAnalyzer {
         MoveContext.INSTANCE.getPlayers().stream().filter(player -> mover.equalsIgnoreCase(player.getName()))
                 .findFirst().ifPresent(player -> {
             PlayerStatus streetStatus =
-                    StreetContext.INSTANCE.getStatusMap().computeIfAbsent(mover, key -> new PlayerStatus());
+                    StreetContext.INSTANCE.getPreFlopStatusMap().computeIfAbsent(mover, key -> new PlayerStatus());
             String moveStatus = player.getStatus();
             int moveBet = player.getBet();
             int bigBlindAmount = HandContext.INSTANCE.getBigBlindAmount();
