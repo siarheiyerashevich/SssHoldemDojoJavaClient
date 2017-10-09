@@ -9,13 +9,13 @@ import com.nedogeek.model.AggressionData;
 import com.nedogeek.model.AggressorData;
 import com.nedogeek.model.Card;
 import com.nedogeek.model.Player;
+import com.nedogeek.model.PlayerStatus;
 import com.nedogeek.model.Position;
 import com.nedogeek.model.Round;
 import com.nedogeek.model.TableType;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class MoveDataAnalyzer {
 
@@ -133,46 +133,68 @@ public class MoveDataAnalyzer {
         return new AggressionData(callCount, raiseCount, fourBetPlusCount);
     }
 
-    public static String calculateFirstRaiser() {
-        return MoveContext.INSTANCE.getPlayers().stream()
-                .filter(player -> "Rise".equals(player.getStatus()) || "AllIn".equals(player.getStatus()))
-                .findFirst()
-                .map(Player::getName)
-                .orElse(null);
-    }
-
     public static void calculatePreFlopAggression() {
-        Map<String, AggressionData> aggressionMap = GameContext.INSTANCE.getAggressionMap();
+        String mover = MoveContext.INSTANCE.getMover();
+        AggressionData gameAggressionData =
+                GameContext.INSTANCE.getAggressionMap().computeIfAbsent(mover, key -> new AggressionData());
 
-        for (Player player : MoveContext.INSTANCE.getPlayers()) {
-            String name = player.getName();
-            if (Client.USER_NAME.equalsIgnoreCase(name)) {
-                continue;
+        MoveContext.INSTANCE.getPlayers().stream().filter(player -> mover.equalsIgnoreCase(player.getName()))
+                .findFirst().ifPresent(player -> {
+            PlayerStatus streetStatus =
+                    StreetContext.INSTANCE.getStatusMap().computeIfAbsent(mover, key -> new PlayerStatus());
+            String moveStatus = player.getStatus();
+            int moveBet = player.getBet();
+            int bigBlindAmount = HandContext.INSTANCE.getBigBlindAmount();
+
+            if (moveBet <= streetStatus.getBet()) {
+                return;
             }
 
-            AggressionData aggressionData = aggressionMap.computeIfAbsent(name, key -> new AggressionData());
-            String status = player.getStatus();
-            switch (status) {
+            streetStatus.setBet(moveBet);
+
+            switch (moveStatus) {
                 case "Rise":
                 case "AllIn":
-                    if (!name.equalsIgnoreCase(StreetContext.INSTANCE.getFirstRaiser())) {
-                        aggressionData.incrementThreeBetCount();
-                    } else {
-                        int betAmount = player.getBet();
-                        int bigBlindAmount = HandContext.INSTANCE.getBigBlindAmount();
+                    String status = streetStatus.getStatus();
+                    if (status.equalsIgnoreCase("Rise")) {
+                        gameAggressionData.decrementRaiseCount();
 
-                        if (betAmount / bigBlindAmount > 3) {
-                            aggressionData.incrementThreeBetCount();
+                        if (moveBet / bigBlindAmount > 10) {
+                            gameAggressionData.incrementFourBetPlusCount();
+                            streetStatus.setStatus("FourPlusBet");
                         } else {
-                            aggressionData.incrementRaiseCount();
+                            gameAggressionData.incrementThreeBetCount();
+                            streetStatus.setStatus("ThreeBet");
+                        }
+
+                        if (mover.equalsIgnoreCase(StreetContext.INSTANCE.getFirstRaiser())) {
+                            StreetContext.INSTANCE.setFirstRaiser(null);
+                        }
+                    } else if (status.equalsIgnoreCase("ThreeBet")) {
+                        if (moveBet / bigBlindAmount > 10) {
+                            gameAggressionData.decrementThreeBetCount();
+                            gameAggressionData.incrementFourBetPlusCount();
+                            streetStatus.setStatus("FourPlusBet");
+                        }
+                    } else if (!status.equalsIgnoreCase("FourPlusBet")) {
+                        if (status.equalsIgnoreCase("Call")) {
+                            gameAggressionData.decrementCallCount();
+                        }
+
+                        gameAggressionData.incrementRaiseCount();
+                        streetStatus.setStatus(moveStatus);
+
+                        if (StreetContext.INSTANCE.getFirstRaiser() == null) {
+                            StreetContext.INSTANCE.setFirstRaiser(mover);
                         }
                     }
                     break;
                 case "Call":
-                    aggressionData.incrementCallCount();
+                    streetStatus.setStatus(moveStatus);
+                    gameAggressionData.incrementCallCount();
                     break;
             }
-        }
+        });
     }
 
     public static AggressorData calculateAggressors() {

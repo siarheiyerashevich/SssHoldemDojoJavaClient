@@ -58,11 +58,7 @@ public class Client {
                                              ServerDataParser.parseMoveData(data);
 
                                              if (StreetContext.INSTANCE.getRound() == Round.PRE_FLOP) {
-                                                 String firstRaiser = StreetContext.INSTANCE.getFirstRaiser();
-                                                 if (firstRaiser == null) {
-                                                     StreetContext.INSTANCE
-                                                             .setFirstRaiser(MoveDataAnalyzer.calculateFirstRaiser());
-                                                 }
+                                                 MoveDataAnalyzer.calculatePreFlopAggression();
                                              }
 
                                              String event = MoveContext.INSTANCE.getEvent().get(0);
@@ -85,10 +81,6 @@ public class Client {
                                                                     HandContext.INSTANCE.getInitialCardsWeight() +
                                                                     "},");
                                              } else if (event.endsWith(" game round started.")) {
-                                                 if (StreetContext.INSTANCE.getRound() == Round.FLOP) {
-                                                     MoveDataAnalyzer.calculatePreFlopAggression();
-                                                 }
-
                                                  StreetContext.INSTANCE.resetContext();
                                                  StreetContext.INSTANCE.setRound(MoveDataAnalyzer.calculateRound());
                                              }
