@@ -10,6 +10,7 @@ public enum HandContext {
     private TableType tableType;
     private int initialCardsWeight;
     private int bigBlindAmount;
+    private String aggressor;
 
     public Position getPosition() {
         return position;
@@ -43,10 +44,19 @@ public enum HandContext {
         this.bigBlindAmount = bigBlindAmount;
     }
 
+    public String getAggressor() {
+        return aggressor;
+    }
+
+    public void setAggressor(String aggressor) {
+        this.aggressor = aggressor;
+    }
+
     public void resetContext() {
         position = null;
         tableType = null;
         initialCardsWeight = -1;
         bigBlindAmount = 0;
+        aggressor = null;
     }
 }

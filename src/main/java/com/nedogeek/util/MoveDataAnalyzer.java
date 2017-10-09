@@ -196,6 +196,9 @@ public class MoveDataAnalyzer {
                             }
                         }
                     }
+
+                    HandContext.INSTANCE.setAggressor(mover);
+
                     break;
                 case "Call":
                     streetStatus.setStatus(moveStatus);
