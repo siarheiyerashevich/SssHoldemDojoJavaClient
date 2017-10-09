@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import com.nedogeek.util.CardsWeightCalculator;
 
@@ -72,7 +73,7 @@ public class HandStorage {
 
     public static void main(String[] args) {
 
-        int percantage = 2;
+        int percantage = 3;
         List<Card[]> hands =  HandStorage.getInstance().getHandsRange(percantage);
         System.out.println(percantage + "%");
         for(Card[] hand : hands) {
@@ -104,5 +105,43 @@ public class HandStorage {
             }
         }
         return handsRange;
+    }
+
+    /**
+     * Get hands list based on percantage and cards weight
+     * @param percentage
+     *          percantage from 0 to 100%
+     * @return
+     */
+    public HandsRange getHandsRange2(double percentage) {
+        if(percentage < 0) {
+            percentage = 0;
+        }
+        if(percentage > 100) {
+            percentage = 100;
+        }
+        double handsCountForPercantage = (double) ALL_HANDS_SIZE * percentage / 100;
+        double selectedHandsCount = 0;
+        List<Hand> handsRange = new ArrayList<>((int) handsCountForPercantage + 16);
+        for(List<Card[]> sublistOfHand : allHandsMap.values()) {
+            handsRange.addAll(sublistOfHand.stream()
+                    .map(cards -> Hand.of(cards[0], cards[1]))
+                    .collect(Collectors.toList()));
+            selectedHandsCount += sublistOfHand.size();
+            if(selectedHandsCount > handsCountForPercantage) {
+                break;
+            }
+        }
+        return new HandsRange(handsRange);
+    }
+
+    public List<Hand> getAllHands(List<Card> excludeCards) {
+
+        return allHandsMap.values().stream()
+                .flatMap(List::stream)
+                .map(cards -> Hand.of(cards[0], cards[1]))
+                .filter(hand -> !excludeCards.contains(hand.getFirstCard())
+                        && !excludeCards.contains(hand.getSecondCard()))
+                .collect(Collectors.toList());
     }
 }
