@@ -181,11 +181,19 @@ public class MoveDataAnalyzer {
                             gameAggressionData.decrementCallCount();
                         }
 
-                        gameAggressionData.incrementRaiseCount();
-                        streetStatus.setStatus(moveStatus);
+                        if (moveBet / bigBlindAmount > 10) {
+                            gameAggressionData.incrementFourBetPlusCount();
+                            streetStatus.setStatus("FourPlusBet");
+                        } else if (moveBet / bigBlindAmount > 3) {
+                            gameAggressionData.incrementThreeBetCount();
+                            streetStatus.setStatus("ThreeBet");
+                        } else {
+                            gameAggressionData.incrementRaiseCount();
+                            streetStatus.setStatus(moveStatus);
 
-                        if (StreetContext.INSTANCE.getFirstRaiser() == null) {
-                            StreetContext.INSTANCE.setFirstRaiser(mover);
+                            if (StreetContext.INSTANCE.getFirstRaiser() == null) {
+                                StreetContext.INSTANCE.setFirstRaiser(mover);
+                            }
                         }
                     }
                     break;
