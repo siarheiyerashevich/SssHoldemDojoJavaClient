@@ -158,10 +158,10 @@ public class MoveDataAnalyzer {
                     if (!name.equalsIgnoreCase(StreetContext.INSTANCE.getFirstRaiser())) {
                         aggressionData.incrementThreeBetCount();
                     } else {
-                        int callAmount = calculateCallAmount();
+                        int betAmount = player.getBet();
                         int bigBlindAmount = HandContext.INSTANCE.getBigBlindAmount();
 
-                        if (callAmount / bigBlindAmount > 3) {
+                        if (betAmount / bigBlindAmount > 3) {
                             aggressionData.incrementThreeBetCount();
                         } else {
                             aggressionData.incrementRaiseCount();
