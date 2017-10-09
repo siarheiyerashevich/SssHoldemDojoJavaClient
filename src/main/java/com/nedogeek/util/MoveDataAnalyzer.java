@@ -251,13 +251,16 @@ public class MoveDataAnalyzer {
 
     public static int calculateRaiseAmount() {
         int blindAmount = HandContext.INSTANCE.getBigBlindAmount();
+        int callAmount = calculateCallAmount();
+        int raiseBase = blindAmount > callAmount ? blindAmount : callAmount;
+
         Position position = HandContext.INSTANCE.getPosition();
 
         switch (position) {
             case UNDER_THE_GUN:
-                return 4 * blindAmount;
+                return 4 * raiseBase;
             default:
-                return 3 * blindAmount;
+                return 3 * raiseBase;
         }
     }
 
