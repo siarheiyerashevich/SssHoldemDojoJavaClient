@@ -15,19 +15,13 @@ public abstract class PreFlopActionStrategy implements Strategy {
         double winProbability = MoveDataAnalyzer.calculateHandWinProbability();
         if (winProbability >= calculateRaiseProbabilityLimit()) {
             int raiseAmount = MoveDataAnalyzer.calculateRaiseAmount();
-            int callAmount = MoveDataAnalyzer.calculateCallAmount();
             int ownBalance = MoveDataAnalyzer.calculateOwnBalance();
 
             System.out.println("{\"raising\": {" +
                                "\"raiseAmount\":" + raiseAmount + ","
-                               + "\"callAmount\":" + callAmount + ","
                                + "\"ownBalance\":" + ownBalance + ","
                                + "\"winProbability\":" + winProbability + ","
                                + "}},");
-
-            if (callAmount > raiseAmount) {
-                return MoveResponse.RAISE_MOVE_RESPONSE.withAmount(callAmount * 3);
-            }
 
             return ownBalance > raiseAmount * 2 ?
                    MoveResponse.RAISE_MOVE_RESPONSE.withAmount(raiseAmount) :
