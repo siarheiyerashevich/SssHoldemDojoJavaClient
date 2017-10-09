@@ -8,18 +8,17 @@ import com.nedogeek.util.MoveDataAnalyzer;
 import java.util.Map;
 import java.util.Set;
 
-import static com.nedogeek.strategy.preflop.PreFlopActionCoefficients.THREE_BET_CALL_COEFFICIENT;
-import static com.nedogeek.strategy.preflop.PreFlopActionCoefficients.THREE_BET_RAISE_COEFFICIENT;
+import static com.nedogeek.strategy.preflop.PreFlopActionCoefficients.FOUR_BET_PLUS_CALL_COEFFICIENT;
+import static com.nedogeek.strategy.preflop.PreFlopActionCoefficients.FOUR_BET_PLUS_RAISE_COEFFICIENT;
 
-public class ThreeBetPreFlopStrategy extends PreFlopActionStrategy {
-
+public class FourBetPlusPreFlopStrategy extends PreFlopActionStrategy {
 
     public double getInitialRaiseProbabilityLimit() {
-        return THREE_BET_RAISE_COEFFICIENT;
+        return FOUR_BET_PLUS_RAISE_COEFFICIENT;
     }
 
     public double getInitialCallProbabilityLimit() {
-        return THREE_BET_CALL_COEFFICIENT;
+        return FOUR_BET_PLUS_CALL_COEFFICIENT;
     }
 
     public double calculateStatsBasedRaiseProbabilityLimit() {
@@ -34,16 +33,15 @@ public class ThreeBetPreFlopStrategy extends PreFlopActionStrategy {
 
     private double calculateMinimalEntryProbability() {
         AggressorData aggressorData = MoveDataAnalyzer.calculateAggressors();
-        Set<String> threeBetters = aggressorData.getThreeBetters();
+        Set<String> fourBetPlusBetters = aggressorData.getFourBetPlusBetters();
         Map<String, AggressionData> aggressionMap = GameContext.INSTANCE.getAggressionMap();
         double minimalEntryProbability = 1;
 
-        for (String threeBetter : threeBetters) {
-            AggressionData aggressionData = aggressionMap.get(threeBetter);
-            double threeBetCount = aggressionData.getThreeBetCount() + aggressionData.getFourBetPlusCount();
-            double threeBetProbability = threeBetCount / GameContext.INSTANCE.getHandsCount();
-            if (minimalEntryProbability < threeBetProbability) {
-                minimalEntryProbability = threeBetProbability;
+        for (String fourBetPlusBetter : fourBetPlusBetters) {
+            double fourBetPlusCount = aggressionMap.get(fourBetPlusBetter).getFourBetPlusCount();
+            double fourBetPlusProbability = fourBetPlusCount / GameContext.INSTANCE.getHandsCount();
+            if (minimalEntryProbability < fourBetPlusProbability) {
+                minimalEntryProbability = fourBetPlusProbability;
             }
         }
 

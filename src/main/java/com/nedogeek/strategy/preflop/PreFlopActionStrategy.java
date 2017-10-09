@@ -1,5 +1,6 @@
 package com.nedogeek.strategy.preflop;
 
+import com.nedogeek.context.GameContext;
 import com.nedogeek.context.HandContext;
 import com.nedogeek.model.MoveResponse;
 import com.nedogeek.model.Position;
@@ -14,19 +15,13 @@ public abstract class PreFlopActionStrategy implements Strategy {
         double winProbability = MoveDataAnalyzer.calculateHandWinProbability();
         if (winProbability >= calculateRaiseProbabilityLimit()) {
             int raiseAmount = MoveDataAnalyzer.calculateRaiseAmount();
-            int callAmount = MoveDataAnalyzer.calculateCallAmount();
             int ownBalance = MoveDataAnalyzer.calculateOwnBalance();
 
             System.out.println("{\"raising\": {" +
                                "\"raiseAmount\":" + raiseAmount + ","
-                               + "\"callAmount\":" + callAmount + ","
                                + "\"ownBalance\":" + ownBalance + ","
                                + "\"winProbability\":" + winProbability + ","
                                + "}},");
-
-            if (callAmount > raiseAmount) {
-                return MoveResponse.RAISE_MOVE_RESPONSE.withAmount(callAmount * 3);
-            }
 
             return ownBalance > raiseAmount * 2 ?
                    MoveResponse.RAISE_MOVE_RESPONSE.withAmount(raiseAmount) :
@@ -50,6 +45,13 @@ public abstract class PreFlopActionStrategy implements Strategy {
     }
 
     private double calculateRaiseProbabilityLimit() {
+        int handsCount = GameContext.INSTANCE.getHandsCount();
+
+        return handsCount < GameContext.MINIMAL_VALID_STATS_HAND_COUNT ? calculateCardBasedRaiseProbabilityLimit() :
+               calculateStatsBasedRaiseProbabilityLimit();
+    }
+
+    public double calculateCardBasedRaiseProbabilityLimit() {
         double initialRaiseProbabilityLimit = getInitialRaiseProbabilityLimit();
         double positionMargin = calculatePositionMargin();
         double tableTypeMargin = calculateTableTypeMargin();
@@ -66,6 +68,13 @@ public abstract class PreFlopActionStrategy implements Strategy {
     }
 
     private double calculateCallProbabilityLimit() {
+        int handsCount = GameContext.INSTANCE.getHandsCount();
+
+        return handsCount < GameContext.MINIMAL_VALID_STATS_HAND_COUNT ? calculateCardBasedCallProbabilityLimit() :
+               calculateStatsBasedCallProbabilityLimit();
+    }
+
+    public double calculateCardBasedCallProbabilityLimit() {
         double initialCallProbabilityLimit = getInitialCallProbabilityLimit();
         double positionMargin = calculatePositionMargin();
         double tableTypeMargin = calculateTableTypeMargin();
@@ -118,4 +127,8 @@ public abstract class PreFlopActionStrategy implements Strategy {
     public abstract double getInitialRaiseProbabilityLimit();
 
     public abstract double getInitialCallProbabilityLimit();
+
+    public abstract double calculateStatsBasedRaiseProbabilityLimit();
+
+    public abstract double calculateStatsBasedCallProbabilityLimit();
 }
