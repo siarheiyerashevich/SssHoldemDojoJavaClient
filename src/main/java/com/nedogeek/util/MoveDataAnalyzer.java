@@ -62,6 +62,7 @@ public class MoveDataAnalyzer {
                                                                                               secondCard.getSuit());
     }
 
+    // TODO: Try to rethink! is it OK that we use this stats!
     public static double calculateHandWinProbability() {
         return (170d - calculateInitialCardsWeight()) / 169d;
     }
@@ -141,7 +142,7 @@ public class MoveDataAnalyzer {
         MoveContext.INSTANCE.getPlayers().stream().filter(player -> mover.equalsIgnoreCase(player.getName()))
                 .findFirst().ifPresent(player -> {
             PlayerStatus streetStatus =
-                    StreetContext.INSTANCE.getPreFlopStatusMap().computeIfAbsent(mover, key -> new PlayerStatus());
+                    HandContext.INSTANCE.getPreFlopStatusMap().computeIfAbsent(mover, key -> new PlayerStatus());
             String moveStatus = player.getStatus();
             int moveBet = player.getBet();
             int bigBlindAmount = HandContext.INSTANCE.getBigBlindAmount();
