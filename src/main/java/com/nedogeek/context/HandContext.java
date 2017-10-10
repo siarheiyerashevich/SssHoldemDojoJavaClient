@@ -1,7 +1,11 @@
 package com.nedogeek.context;
 
+import com.nedogeek.model.PlayerStatus;
 import com.nedogeek.model.Position;
 import com.nedogeek.model.TableType;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public enum HandContext {
     INSTANCE;
@@ -10,6 +14,8 @@ public enum HandContext {
     private TableType tableType;
     private int initialCardsWeight;
     private int bigBlindAmount;
+    private String aggressor;
+    private Map<String, PlayerStatus> preFlopStatusMap = new HashMap<>();
 
     public Position getPosition() {
         return position;
@@ -43,10 +49,28 @@ public enum HandContext {
         this.bigBlindAmount = bigBlindAmount;
     }
 
+    public String getAggressor() {
+        return aggressor;
+    }
+
+    public void setAggressor(String aggressor) {
+        this.aggressor = aggressor;
+    }
+
+    public Map<String, PlayerStatus> getPreFlopStatusMap() {
+        return preFlopStatusMap;
+    }
+
+    public void setPreFlopStatusMap(Map<String, PlayerStatus> preFlopStatusMap) {
+        this.preFlopStatusMap = preFlopStatusMap;
+    }
+
     public void resetContext() {
         position = null;
         tableType = null;
         initialCardsWeight = -1;
         bigBlindAmount = 0;
+        aggressor = null;
+        preFlopStatusMap = new HashMap<>();
     }
 }

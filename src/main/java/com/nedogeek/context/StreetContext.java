@@ -8,6 +8,7 @@ public enum StreetContext {
     private Round round;
     private String firstRaiser;
 
+
     public Round getRound() {
         return round;
     }

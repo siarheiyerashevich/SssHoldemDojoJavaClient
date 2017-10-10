@@ -24,6 +24,11 @@ public class AggressionData {
         callCount++;
     }
 
+
+    public void decrementCallCount() {
+        callCount--;
+    }
+
     public long getRaiseCount() {
         return raiseCount;
     }
@@ -32,6 +37,11 @@ public class AggressionData {
         raiseCount++;
     }
 
+    public void decrementRaiseCount() {
+        raiseCount--;
+    }
+
+
     public long getThreeBetCount() {
         return threeBetCount;
     }
@@ -39,6 +49,10 @@ public class AggressionData {
 
     public void incrementThreeBetCount() {
         threeBetCount++;
+    }
+
+    public void decrementThreeBetCount() {
+        threeBetCount--;
     }
 
     public long getFourBetPlusCount() {
