@@ -2,6 +2,8 @@ package com.nedogeek.strategy.postflop;
 
 import java.util.SplittableRandom;
 
+import com.nedogeek.Client;
+import com.nedogeek.context.HandContext;
 import com.nedogeek.context.MoveContext;
 import com.nedogeek.model.MoveResponse;
 import com.nedogeek.util.MoveDataAnalyzer;
@@ -27,11 +29,10 @@ public class NoActionsPostFlopStrategy extends PostFlopActionStrategy {
 
     private MoveResponse evaluateContBetResponse(int pot, int ownBalance) {
 
-        // TODO: Get how is an aggressor on PreFlop and make ContBet
-        boolean iamAggressor = false;
+        boolean iamAggressor = Client.USER_NAME.equalsIgnoreCase(HandContext.INSTANCE.getAggressor());
         int probability = new SplittableRandom().nextInt(0, 100);
         if (MoveContext.INSTANCE.getPlayers().size() <= CONTBET_OPPONENT_COUNT
-//                && iamAggressor
+                && iamAggressor
                 && probability <= CONTBET_PROBABILITY_PERCENT
                 && ownBalance > CONTBET_OWNBALANCE_RANK * pot) {
 
