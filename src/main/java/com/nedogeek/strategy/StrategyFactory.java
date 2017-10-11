@@ -45,6 +45,8 @@ public enum StrategyFactory {
             case RIVER:
             case FINAL:
                 return postFlopStrategy;
+            case INITIAL:
+                return null;
         }
 
         throw new IllegalArgumentException("Round not found: " + round);

@@ -110,6 +110,8 @@ public class MoveDataAnalyzer {
                 return Round.RIVER;
             case "FINAL":
                 return Round.FINAL;
+            case "INITIAL":
+                return Round.INITIAL;
         }
 
         throw new IllegalArgumentException("Round not found: " + event);
