@@ -18,9 +18,9 @@ public class FastCombination {
         long time = System.currentTimeMillis();
         double combinationWeight = 0;
         System.out.println(time);
-        for (int i = 0; i < attempt; i++) {
+//        for (int i = 0; i < attempt; i++) {
             combinationWeight = emulateCombinationEvaluator();
-        }
+//        }
         System.out.println(System.currentTimeMillis());
         double avgTime = (System.currentTimeMillis() - time) / 100;
         System.out.println("combinationWeight " + combinationWeight + ", avg execution per 100 items: " + avgTime + " ms");
@@ -34,17 +34,17 @@ public class FastCombination {
         hand[0] = new Card(CardSuit.DIAMONDS, CardValue.ACE);
         hand[1] = new Card(CardSuit.CLUBS, CardValue.TWO);
 
-        Card[] board = new Card[5];
-        board[0] = new Card(CardSuit.SPADES, CardValue.JACK);
-        board[1] = new Card(CardSuit.SPADES, CardValue.TEN);
+        Card[] board = new Card[3];
+        board[0] = new Card(CardSuit.SPADES, CardValue.TWO);
+        board[1] = new Card(CardSuit.HEARTS, CardValue.TWO);
         board[2] = new Card(CardSuit.SPADES, CardValue.NINE);
-        board[3] = new Card(CardSuit.SPADES, CardValue.EIGHT);
-        board[4] = new Card(CardSuit.DIAMONDS, CardValue.KING);
+//        board[3] = new Card(CardSuit.SPADES, CardValue.EIGHT);
+//        board[4] = new Card(CardSuit.DIAMONDS, CardValue.KING);
 
         return getCombinationWeight(hand, board);
     }
 
-    private static void sortHand(Card[] cards) {
+    public static void sortHand(Card[] cards) {
 
         for (int n = 0; n < cards.length; n++) {
             for (int i = 0; i < cards.length - n - 1; i++) {
@@ -57,7 +57,7 @@ public class FastCombination {
         }
     }
 
-    static double getCombinationWeight(Hand hand, Card[] board) {
+    public static double getCombinationWeight(Hand hand, Card[] board) {
 
         int handLen = 2;
         Card[] cards = new Card[handLen + board.length];
@@ -80,6 +80,10 @@ public class FastCombination {
     private static final double RANK_RANGE = 100;
     private static final double MAIN_RANK = 4;
     private static final double MAIN_WEIGHT_RANK = Math.pow(RANK_RANGE, MAIN_RANK);
+    public static final double MIN_PAIR_WEIGHT = 13 * MAIN_WEIGHT_RANK;
+    public static final double MIN_TWOPAIR_WEIGHT = 26 * MAIN_WEIGHT_RANK;
+    public static final double MIN_TRIPLE_WEIGHT = 39 * MAIN_WEIGHT_RANK;
+    public static final double MIN_STRAIGHT_WEIGHT = 52 * MAIN_WEIGHT_RANK;
 
     static double calculateCombinationWeight(int mainWeight, int...additionalWeights) {
 
@@ -278,6 +282,7 @@ public class FastCombination {
         int notSameCardsIndex = 0;
         int length = cards.length;
         int repeat = 1;
+        int lastIndex = 0;
         for (int i = 0; i < length - 1; i++) {
             if (cards[i].getValue() == cards[i + 1].getValue()) {
                 repeat++;
@@ -294,6 +299,16 @@ public class FastCombination {
                 // Reset repeat counter
                 repeat = 1;
             }
+            lastIndex = i;
+        }
+        if (repeat == 1) {
+            notSameCardValues[notSameCardsIndex++] = cards[lastIndex].getValue().ordinal();
+        } else if (repeat == 2) {
+            sameCards.addSameCard(new SameCard(cards[lastIndex].getValue(), SameCardType.PAIR));
+        } else if (repeat == 3) {
+            sameCards.addSameCard(new SameCard(cards[lastIndex].getValue(), SameCardType.TRIPLE));
+        } else if (repeat == 4) {
+            sameCards.addSameCard(new SameCard(cards[lastIndex].getValue(), SameCardType.QUAD));
         }
         sameCards.addNotSameCardValues(notSameCardValues);
         return sameCards;

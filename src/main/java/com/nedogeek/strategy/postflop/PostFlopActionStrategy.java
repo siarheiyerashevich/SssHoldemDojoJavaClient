@@ -11,21 +11,16 @@ import com.nedogeek.context.MoveContext;
 import com.nedogeek.model.AggressionDataCalculator;
 import com.nedogeek.model.Card;
 import com.nedogeek.model.Hand;
-import com.nedogeek.model.MoveResponse;
+import com.nedogeek.model.HandStorage;
+import com.nedogeek.model.HandsRange;
 import com.nedogeek.model.PlayerStatus;
+import com.nedogeek.montecarlo.FastCombination;
 import com.nedogeek.montecarlo.GameEmulator;
 import com.nedogeek.strategy.Strategy;
 
-public class PostFlopActionStrategy implements Strategy {
+public abstract class PostFlopActionStrategy implements Strategy {
 
-    @Override
-    public MoveResponse evaluateResponse() {
-
-        // TODO: TBD
-        return null;
-    }
-
-    protected double getEquity(List<String> opponents) {
+    protected double getEquityVsPairPlus(List<String> opponents) {
 
         List<Card> myCards = MoveContext.INSTANCE.getPlayers().stream()
                 .filter(player -> Client.USER_NAME.equalsIgnoreCase(player.getName()))
@@ -36,14 +31,29 @@ public class PostFlopActionStrategy implements Strategy {
         Card[] board = MoveContext.INSTANCE.getDeskCards().toArray(new Card[0]);
 
         Map<String, PlayerStatus> preFlopStatusMap = HandContext.INSTANCE.getPreFlopStatusMap();
-        List<Integer> playersCardsPercentage = new ArrayList<>(preFlopStatusMap.size() - 1);
+        List<Integer> preFlopPlayersCardsPercentage = new ArrayList<>(preFlopStatusMap.size() - 1);
         for (Entry<String, PlayerStatus> playerStatusEntry : preFlopStatusMap.entrySet()) {
             String playerName = playerStatusEntry.getKey();
             if (opponents.contains(playerName)) {
-                playersCardsPercentage.add(AggressionDataCalculator
+                preFlopPlayersCardsPercentage.add(AggressionDataCalculator
                         .getPlayerCardPercentage(playerName, playerStatusEntry.getValue().getStatus()));
             }
         }
-        return GameEmulator.emulateGamesAfterFlop(myHand, board, playersCardsPercentage);
+        List<HandsRange> strengthenedHandsOfPlayers = new ArrayList<>(preFlopPlayersCardsPercentage.size());
+        int playerIndex = 0;
+        for(Integer preFlopPlayerCardsPercentage : preFlopPlayersCardsPercentage) {
+
+            HandsRange handsRange = HandStorage.getInstance().getHandsRange2(preFlopPlayerCardsPercentage);
+            handsRange.getHands().removeIf(myHand::partiallyEquals);
+            List<Hand> strengthenedHands = new ArrayList<>();
+            for(Hand hand : handsRange.getHands()) {
+                double combinationWeight = FastCombination.getCombinationWeight(hand, board);
+                if(combinationWeight < FastCombination.MIN_PAIR_WEIGHT) {
+                    strengthenedHands.add(hand);
+                }
+            }
+            strengthenedHandsOfPlayers.add(new HandsRange(strengthenedHands, playerIndex++));
+        }
+        return GameEmulator.emulateGamesAfterFlopWithHandsRange(myHand, board, strengthenedHandsOfPlayers);
     }
 }

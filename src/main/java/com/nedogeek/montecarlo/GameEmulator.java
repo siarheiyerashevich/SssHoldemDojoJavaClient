@@ -65,8 +65,31 @@ public class GameEmulator {
         return results[results.length - 1];
     }
 
+    public static double emulateGamesAfterFlopWithHandsRange(Hand myHand, Card[] board, List<HandsRange> handsRanges) {
+
+        double[] results = emulateGamesWithHandsRange(myHand, board, 3, handsRanges,
+                DEFAULT_EMULATION_COUNT, Round.FLOP);
+        return results[results.length - 1];
+    }
+
     public static double[] emulateGames(Hand myHand, Card[] board, int existedBoardCount,
             List<Integer> playersPercentage, int emulationCount, Round round) {
+
+        List<HandsRange> playersHandRanges = new ArrayList<>();
+        int playersOpponentCount = playersPercentage.size();
+        int playerIndex = 0;
+        // FIXME: Use simple method with random players cards in case of a lot of players hands
+        for (Integer playerPercentage : playersPercentage) {
+            HandsRange handsRange = HandStorage.getInstance().getHandsRange2(playerPercentage);
+            handsRange.getHands().removeIf(myHand::partiallyEquals);
+            handsRange.setPlayerIndex(playerIndex++);
+            playersHandRanges.add(handsRange);
+        }
+        return emulateGamesWithHandsRange(myHand, board, existedBoardCount, playersHandRanges, emulationCount, round);
+    }
+
+    public static double[] emulateGamesWithHandsRange(Hand myHand, Card[] board, int existedBoardCount,
+            List<HandsRange> playersHandsRange, int emulationCount, Round round) {
 
         List<Card> existedCards = new ArrayList<>();
         existedCards.add(myHand.getFirstCard());
@@ -78,46 +101,23 @@ public class GameEmulator {
                 break;
             }
         }
-        existedCards.add(new Card(CardSuit.DIAMONDS, CardValue.ACE));
-        existedCards.add(new Card(CardSuit.DIAMONDS, CardValue.KING));
+        int playersOpponentCount = 0;
         List<Hand> ternRiverList =
                 round == Round.FLOP ? HandStorage.getInstance().getAllHands(existedCards) : new ArrayList<>();
 
-//        for(Card card : existedCards) {
-//
-//            System.out.println("Existed card " + card);
-//        }
-//        System.out.println(ternRiverList.size());
-//        for(Hand ternRiver : ternRiverList) {
-//
-//            System.out.println(ternRiver);
-//        }
-        List<HandsRange> playersHands = new ArrayList<>();
-        int playersOpponentCount = playersPercentage.size();
-        int playerIndex = 0;
-        long time = 0;
-        // FIXME: Use simple method with random players cards in case of a lot of players hands
-        for (Integer playerPercentage : playersPercentage) {
-            HandsRange handsRange = HandStorage.getInstance().getHandsRange2(playerPercentage);
-            handsRange.getHands().removeIf(myHand::partiallyEquals);
-            handsRange.setPlayerIndex(playerIndex++);
-            playersHands.add(handsRange);
-        }
-//        playersHands.get(0).getHands().clear();
-//        playersHands.get(0).getHands().add(Hand.of(CardSuit.DIAMONDS, CardValue.ACE, CardSuit.DIAMONDS, CardValue.KING));
-        int possiblePlayersCardsPerGame = playersHands.stream().mapToInt(f -> f.getHands().size()).sum();
+        int possiblePlayersCardsPerGame = playersHandsRange.stream().mapToInt(f -> f.getHands().size()).sum();
         boolean playersCardsIteration = possiblePlayersCardsPerGame < PLAYERS_CARDS_LIMIT_FOR_ITERATION;
         List<List<Hand>> playersCardsPerGame = null;
         if (playersCardsIteration) {
-            playersCardsPerGame = getPlayersCardsPerGame(playersHands);
+            playersCardsPerGame = getPlayersCardsPerGame(playersHandsRange);
         } else {
-            playersCardsPerGame = playersHands.stream().map(HandsRange::getHands).collect(Collectors.toList());
+            playersCardsPerGame = playersHandsRange.stream().map(HandsRange::getHands).collect(Collectors.toList());
         }
 //        playersCardsPerGame.forEach(GameEmulator::printHands);
-        time = System.currentTimeMillis() - time;
-        System.out.println("Player cards calculation: " + playersCardsPerGame.size() + ", time: " + time + " ms");
+//        time = System.currentTimeMillis() - time;
+//        System.out.println("Player cards calculation: " + playersCardsPerGame.size() + ", time: " + time + " ms");
 
-        int playersCount = playersHands.size();
+        int playersCount = playersHandsRange.size();
 
         double[] playersEquityArr = new double[playersCount + 1];
         for (int j = 0; j < playersCount + 1; j++) {
