@@ -31,6 +31,16 @@ public class RaisePostFlopStrategy extends PostFlopActionStrategy {
                 }
             }
             // TODO: Add 3-bet/allin logic
+            if(ev > callAmount && callAmount >= pot / 2) {
+
+                if(ownBalance < callAmount * 3) {
+                    if(evPossibleAllIn > 0) {
+                        return MoveResponse.ALL_IN_MOVE_RESPONSE.withAmount(callAmount);
+                    }
+                } else {
+                    return MoveResponse.RAISE_MOVE_RESPONSE.withAmount(callAmount * 3);
+                }
+            }
 
             return MoveResponse.CALL_MOVE_RESPONSE;
         }

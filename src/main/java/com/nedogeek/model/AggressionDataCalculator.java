@@ -32,7 +32,7 @@ public class AggressionDataCalculator {
                             aggressionData.getFourBetPlusCount();
             return callCount / GameContext.INSTANCE.getHandsCount();
         } else {
-            return 30;
+            return 35;
         }
     }
 
@@ -44,7 +44,7 @@ public class AggressionDataCalculator {
                     aggressionData.getFourBetPlusCount();
             return raiseCount / GameContext.INSTANCE.getHandsCount();
         } else {
-            return 15;
+            return 18;
         }
     }
 
@@ -55,7 +55,7 @@ public class AggressionDataCalculator {
             double threeBetCount = aggressionData.getThreeBetCount() + aggressionData.getFourBetPlusCount();
             return threeBetCount / GameContext.INSTANCE.getHandsCount();
         } else {
-            return 5;
+            return 4;
         }
     }
 
@@ -65,7 +65,7 @@ public class AggressionDataCalculator {
         if (handsCount >= GameContext.MINIMAL_VALID_STATS_HAND_COUNT) {
             return aggressionData.getFourBetPlusCount() / GameContext.INSTANCE.getHandsCount();
         } else {
-            return 3;
+            return 2;
         }
     }
 }

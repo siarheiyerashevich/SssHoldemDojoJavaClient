@@ -5,6 +5,7 @@ import com.nedogeek.context.GameContext;
 import com.nedogeek.context.HandContext;
 import com.nedogeek.context.MoveContext;
 import com.nedogeek.context.StreetContext;
+import com.nedogeek.model.Card;
 import com.nedogeek.model.MoveResponse;
 import com.nedogeek.model.Round;
 import com.nedogeek.strategy.StrategyFactory;
@@ -17,13 +18,10 @@ import org.eclipse.jetty.websocket.WebSocketClientFactory;
 
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-
-import sun.rmi.runtime.Log;
 
 
 public class Client {
@@ -31,9 +29,7 @@ public class Client {
     public static final String USER_NAME = "SSS";
     private static final String PASSWORD = "abc123";
 
-    private static final String SERVER = "ws://10.6.99.50:8080/ws";
-
-//    private Logger logger = Logger.getLogger("Client");
+    private static final String SERVER = "ws://10.6.189.183:8080/ws";
 
     private WebSocket.Connection connection;
 
@@ -97,8 +93,22 @@ public class Client {
                                                  event.startsWith(USER_NAME)) {
                                                  MoveResponse moveResponse = MoveResponse.CHECK_MOVE_RESPONSE;
                                                  try {
-                                                     StrategyFactory.INSTANCE.calculateRoundStrategy()
+                                                     moveResponse = StrategyFactory.INSTANCE.calculateRoundStrategy()
                                                              .evaluateResponse();
+
+                                                     List<Card> myCards = MoveContext.INSTANCE.getPlayers().stream()
+                                                             .filter(player -> Client.USER_NAME.equalsIgnoreCase(player.getName()))
+                                                             .findFirst()
+                                                             .orElseThrow(() -> new IllegalArgumentException("Player not found: " + Client.USER_NAME))
+                                                             .getCards();
+
+                                                     String cards = "";
+                                                     for(Card myCard : myCards) {
+                                                         cards += myCard;
+                                                     }
+                                                     System.out.println("CARDS: " + cards);
+                                                     System.out.println("MOVE: " + moveResponse.getCommand());
+
                                                  } catch (Exception e) {
 //                                                     logger.log(Level.);
                                                      System.out.println("Unexpected exception");

@@ -54,6 +54,11 @@ public abstract class PostFlopActionStrategy implements Strategy {
             }
             strengthenedHandsOfPlayers.add(new HandsRange(strengthenedHands, playerIndex++));
         }
-        return GameEmulator.emulateGamesAfterFlopWithHandsRange(myHand, board, strengthenedHandsOfPlayers);
+        Card[] fullBoard = new Card[5];
+        int i = 0;
+        for(Card boardExist : board) {
+            fullBoard[i++] = boardExist;
+        }
+        return GameEmulator.emulateGamesAfterFlopWithHandsRange(myHand, fullBoard, strengthenedHandsOfPlayers);
     }
 }

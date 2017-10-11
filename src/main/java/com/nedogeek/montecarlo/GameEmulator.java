@@ -101,7 +101,7 @@ public class GameEmulator {
                 break;
             }
         }
-        int playersOpponentCount = 0;
+        int playersOpponentCount = playersHandsRange.size();
         List<Hand> ternRiverList =
                 round == Round.FLOP ? HandStorage.getInstance().getAllHands(existedCards) : new ArrayList<>();
 
