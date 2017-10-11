@@ -19,14 +19,21 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+
+import sun.rmi.runtime.Log;
 
 
 public class Client {
 
-    public static final String USER_NAME = "someUser";
-    private static final String PASSWORD = "somePassword";
+    public static final String USER_NAME = "SSS";
+    private static final String PASSWORD = "abc123";
 
-    private static final String SERVER = "ws://localhost:8080/ws";
+    private static final String SERVER = "ws://10.6.99.50:8080/ws";
+
+//    private Logger logger = Logger.getLogger("Client");
 
     private WebSocket.Connection connection;
 
@@ -61,6 +68,8 @@ public class Client {
                                                  MoveDataAnalyzer.calculatePreFlopAggression();
                                              }
 
+                                             StreetContext.INSTANCE.setRound(MoveDataAnalyzer.calculateRound());
+
                                              String event = MoveContext.INSTANCE.getEvent().get(0);
                                              if (event.equalsIgnoreCase("New game started")) {
                                                  GameContext.INSTANCE.incrementHandsCount();
@@ -82,14 +91,19 @@ public class Client {
                                                                     "},");
                                              } else if (event.endsWith(" game round started.")) {
                                                  StreetContext.INSTANCE.resetContext();
-                                                 StreetContext.INSTANCE.setRound(MoveDataAnalyzer.calculateRound());
                                              }
 
                                              if (USER_NAME.equalsIgnoreCase(MoveContext.INSTANCE.getMover()) &&
                                                  event.startsWith(USER_NAME)) {
-                                                 MoveResponse moveResponse =
-                                                         StrategyFactory.INSTANCE.calculateRoundStrategy()
-                                                                 .evaluateResponse();
+                                                 MoveResponse moveResponse = MoveResponse.CHECK_MOVE_RESPONSE;
+                                                 try {
+                                                     StrategyFactory.INSTANCE.calculateRoundStrategy()
+                                                             .evaluateResponse();
+                                                 } catch (Exception e) {
+//                                                     logger.log(Level.);
+                                                     System.out.println("Unexpected exception");
+                                                     e.printStackTrace();
+                                                 }
                                                  try {
                                                      String response = moveResponse.getCommand().toString() +
                                                                        Optional.ofNullable(

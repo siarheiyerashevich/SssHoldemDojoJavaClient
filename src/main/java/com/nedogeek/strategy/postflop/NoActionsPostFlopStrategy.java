@@ -40,20 +40,20 @@ public class NoActionsPostFlopStrategy extends PostFlopActionStrategy {
         double combinationWeight = FastCombination.getCombinationWeight(myHand, board);
 
         boolean combinationWithHand = true;
-        boolean highSameCards = false;
+        boolean highSameCards = true;
         if (combinationWeight >= FastCombination.MIN_PAIR_WEIGHT
                 && combinationWeight < FastCombination.MIN_TWOPAIR_WEIGHT) {
             int pairMainWeight = (int) (combinationWeight - FastCombination.MIN_PAIR_WEIGHT);
             combinationWithHand = myHand.getFirstCard().getValue().ordinal() == pairMainWeight ||
                     myHand.getSecondCard().getValue().ordinal() == pairMainWeight;
-            highSameCards = board[0].getValue().ordinal() == pairMainWeight;
+//            highSameCards = board[0].getValue().ordinal() == pairMainWeight;
         }
         if (combinationWeight >= FastCombination.MIN_TRIPLE_WEIGHT
                 && combinationWeight < FastCombination.MIN_STRAIGHT_WEIGHT) {
             int tripleMainWeight = (int) (combinationWeight - FastCombination.MIN_TRIPLE_WEIGHT);
             combinationWithHand = myHand.getFirstCard().getValue().ordinal() == tripleMainWeight ||
                     myHand.getSecondCard().getValue().ordinal() == tripleMainWeight;
-            highSameCards = board[0].getValue().ordinal() == tripleMainWeight;
+//            highSameCards = board[0].getValue().ordinal() == tripleMainWeight;
         }
 
         // Make a raise for 1/2 pot when you're are aggressor and par++ combination on hand
