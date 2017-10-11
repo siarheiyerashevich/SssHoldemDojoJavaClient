@@ -25,6 +25,7 @@ public class GameEmulator {
     private static final CardValue[] cardValues = CardValue.values();
     private static final int EMULATION_TIMEOUT_INTERVAL = 250;
     private static final int PLAYERS_CARDS_LIMIT_FOR_ITERATION = 5000;
+    private static final int DEFAULT_EMULATION_COUNT = 100000;
 
     public static void main(String[] args) {
 
@@ -55,6 +56,13 @@ public class GameEmulator {
         for (int i = 0; i < equities.length - 1; i++) {
             System.out.println("Player " + (i + 1) + ": " + (equities[i] * 100) + "%");
         }
+    }
+
+    public static double emulateGamesAfterFlop(Hand myHand, Card[] board, List<Integer> playersCardsPercentage) {
+
+        double[] results = emulateGames(myHand, board, 3, playersCardsPercentage,
+                DEFAULT_EMULATION_COUNT, Round.FLOP);
+        return results[results.length - 1];
     }
 
     public static double[] emulateGames(Hand myHand, Card[] board, int existedBoardCount,

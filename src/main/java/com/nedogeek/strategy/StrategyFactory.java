@@ -3,6 +3,11 @@ package com.nedogeek.strategy;
 import com.nedogeek.context.StreetContext;
 import com.nedogeek.model.AggressionData;
 import com.nedogeek.model.Round;
+import com.nedogeek.strategy.postflop.CallPostFlopStrategy;
+import com.nedogeek.strategy.postflop.NoActionsPostFlopStrategy;
+import com.nedogeek.strategy.postflop.PostFlopStrategy;
+import com.nedogeek.strategy.postflop.RaisePostFlopStrategy;
+import com.nedogeek.strategy.postflop.ThreeBetPlusPostFlopStrategy;
 import com.nedogeek.strategy.preflop.CallPreFlopStrategy;
 import com.nedogeek.strategy.preflop.FourBetPlusPreFlopStrategy;
 import com.nedogeek.strategy.preflop.NoActionsPreFlopStrategy;
@@ -15,14 +20,20 @@ public enum StrategyFactory {
 
     INSTANCE;
 
-    private final Strategy checkStrategy = new CheckStrategy();
-
+    // Pre-flop strategies
     private final Strategy preFlopStrategy = new PreFlopStrategy();
     private final Strategy noActionsPreFlopStrategy = new NoActionsPreFlopStrategy();
     private final Strategy callPreFlopStrategy = new CallPreFlopStrategy();
     private final Strategy raisePreFlopStrategy = new RaisePreFlopStrategy();
     private final Strategy threeBetPreFlopStrategy = new ThreeBetPreFlopStrategy();
     private final Strategy fourBetPlusPreFlopStrategy = new FourBetPlusPreFlopStrategy();
+
+    // Post-flop strategies
+    private final Strategy postFlopStrategy = new PostFlopStrategy();
+    private final Strategy noActionsPostFlopStrategy = new NoActionsPostFlopStrategy();
+    private final Strategy callPostFlopStrategy = new CallPostFlopStrategy();
+    private final Strategy raisePostFlopStrategy = new RaisePostFlopStrategy();
+    private final Strategy threeBetPlusPostFlopStrategy = new ThreeBetPlusPostFlopStrategy();
 
     public Strategy calculateRoundStrategy() {
         Round round = StreetContext.INSTANCE.getRound();
@@ -34,7 +45,7 @@ public enum StrategyFactory {
             case TURN:
             case RIVER:
             case FINAL:
-                return checkStrategy;
+                return postFlopStrategy;
         }
 
         throw new IllegalArgumentException("Round not found: " + round);
@@ -49,7 +60,7 @@ public enum StrategyFactory {
 
         if (raiseCount == 0) {
             if (callCount == 0) {
-                return noActionsPreFlopStrategy;
+                return noActionsPostFlopStrategy;
             } else {
                 return callPreFlopStrategy;
             }
@@ -59,6 +70,25 @@ public enum StrategyFactory {
             return fourBetPlusPreFlopStrategy;
         } else {
             return threeBetPreFlopStrategy;
+        }
+    }
+
+    public Strategy calculatePostFlopStrategy() {
+        AggressionData aggressionData = MoveDataAnalyzer.calculateAggression();
+
+        long callCount = aggressionData.getCallCount();
+        long raiseCount = aggressionData.getRaiseCount();
+
+        if (raiseCount == 0) {
+            if (callCount == 0) {
+                return noActionsPreFlopStrategy;
+            } else {
+                return callPostFlopStrategy;
+            }
+        } else if (raiseCount == 1) {
+            return raisePostFlopStrategy;
+        } else {
+            return threeBetPlusPostFlopStrategy;
         }
     }
 }
