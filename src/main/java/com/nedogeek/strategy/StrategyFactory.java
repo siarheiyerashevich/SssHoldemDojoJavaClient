@@ -3,7 +3,6 @@ package com.nedogeek.strategy;
 import com.nedogeek.context.StreetContext;
 import com.nedogeek.model.AggressionData;
 import com.nedogeek.model.Round;
-import com.nedogeek.strategy.postflop.CallPostFlopStrategy;
 import com.nedogeek.strategy.postflop.NoActionsPostFlopStrategy;
 import com.nedogeek.strategy.postflop.PostFlopStrategy;
 import com.nedogeek.strategy.postflop.RaisePostFlopStrategy;
@@ -31,11 +30,11 @@ public enum StrategyFactory {
     // Post-flop strategies
     private final Strategy postFlopStrategy = new PostFlopStrategy();
     private final Strategy noActionsPostFlopStrategy = new NoActionsPostFlopStrategy();
-    private final Strategy callPostFlopStrategy = new CallPostFlopStrategy();
     private final Strategy raisePostFlopStrategy = new RaisePostFlopStrategy();
     private final Strategy threeBetPlusPostFlopStrategy = new ThreeBetPlusPostFlopStrategy();
 
     public Strategy calculateRoundStrategy() {
+
         Round round = StreetContext.INSTANCE.getRound();
 
         switch (round) {
@@ -52,6 +51,7 @@ public enum StrategyFactory {
     }
 
     public Strategy calculatePreFlopStrategy() {
+
         AggressionData aggressionData = MoveDataAnalyzer.calculateAggression();
 
         long callCount = aggressionData.getCallCount();
@@ -74,21 +74,17 @@ public enum StrategyFactory {
     }
 
     public Strategy calculatePostFlopStrategy() {
+
         AggressionData aggressionData = MoveDataAnalyzer.calculateAggression();
 
-        long callCount = aggressionData.getCallCount();
         long raiseCount = aggressionData.getRaiseCount();
 
         if (raiseCount == 0) {
-            if (callCount == 0) {
-                return noActionsPreFlopStrategy;
-            } else {
-                return callPostFlopStrategy;
-            }
+            return noActionsPreFlopStrategy;
         } else if (raiseCount == 1) {
             return raisePostFlopStrategy;
         } else {
-            return threeBetPlusPostFlopStrategy;
+            return raisePostFlopStrategy;
         }
     }
 }

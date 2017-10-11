@@ -44,7 +44,7 @@ public class FastCombination {
         return getCombinationWeight(hand, board);
     }
 
-    private static void sortHand(Card[] cards) {
+    public static void sortHand(Card[] cards) {
 
         for (int n = 0; n < cards.length; n++) {
             for (int i = 0; i < cards.length - n - 1; i++) {
@@ -57,7 +57,7 @@ public class FastCombination {
         }
     }
 
-    static double getCombinationWeight(Hand hand, Card[] board) {
+    public static double getCombinationWeight(Hand hand, Card[] board) {
 
         int handLen = 2;
         Card[] cards = new Card[handLen + board.length];
@@ -80,6 +80,10 @@ public class FastCombination {
     private static final double RANK_RANGE = 100;
     private static final double MAIN_RANK = 4;
     private static final double MAIN_WEIGHT_RANK = Math.pow(RANK_RANGE, MAIN_RANK);
+    public static final double MIN_PAIR_WEIGHT = 13 * MAIN_WEIGHT_RANK;
+    public static final double MIN_TWOPAIR_WEIGHT = 26 * MAIN_WEIGHT_RANK;
+    public static final double MIN_TRIPLE_WEIGHT = 39 * MAIN_WEIGHT_RANK;
+    public static final double MIN_STRAIGHT_WEIGHT = 52 * MAIN_WEIGHT_RANK;
 
     static double calculateCombinationWeight(int mainWeight, int...additionalWeights) {
 

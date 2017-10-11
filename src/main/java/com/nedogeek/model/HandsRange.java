@@ -12,6 +12,12 @@ public class HandsRange {
         this.hands = hands;
     }
 
+    public HandsRange(List<Hand> hands, int playerIndex) {
+
+        this.hands = hands;
+        this.playerIndex = playerIndex;
+    }
+
     public List<Hand> getHands() {
 
         return hands;
