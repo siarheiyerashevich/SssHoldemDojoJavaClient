@@ -33,6 +33,8 @@ public enum StrategyFactory {
     private final Strategy raisePostFlopStrategy = new RaisePostFlopStrategy();
     private final Strategy threeBetPlusPostFlopStrategy = new ThreeBetPlusPostFlopStrategy();
 
+    private final Strategy checkStrategy = new CheckStrategy();
+
     public Strategy calculateRoundStrategy() {
 
         Round round = StreetContext.INSTANCE.getRound();
@@ -46,7 +48,7 @@ public enum StrategyFactory {
             case FINAL:
                 return postFlopStrategy;
             case INITIAL:
-                return null;
+                return checkStrategy;
         }
 
         throw new IllegalArgumentException("Round not found: " + round);
