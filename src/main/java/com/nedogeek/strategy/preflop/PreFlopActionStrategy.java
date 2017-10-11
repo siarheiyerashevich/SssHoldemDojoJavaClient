@@ -93,16 +93,16 @@ public abstract class PreFlopActionStrategy implements Strategy {
     private double calculatePositionMargin() {
         Position position = HandContext.INSTANCE.getPosition();
         switch (position) {
-            case BIG_BLIND:
-            case SMALL_BLIND:
-                return 0.1;
-            case BUTTON:
-            case CUT_OFF:
-                return 0.05;
-            case MIDDLE_POSITION:
-                return 0;
-            case UNDER_THE_GUN:
-                return -0.02;
+//            case BIG_BLIND:
+//            case SMALL_BLIND:
+//                return 0.1;
+//            case BUTTON:
+//            case CUT_OFF:
+//                return 0.05;
+//            case MIDDLE_POSITION:
+//                return 0;
+//            case UNDER_THE_GUN:
+//                return -0.02;
             default:
                 return 0;
         }
